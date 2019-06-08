@@ -6,12 +6,17 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "lint": "eslint .",
+    "eslint-check": "eslint --print-config .eslintrc.js | eslint-config-prettier-check",
+    "prettier": "prettier --write '**/*.{js,json,css,md}'",
+    "clean": "watchman watch-del-all && rm -rf node_modules && yarn install && rm -rf /tmp/metro-bundler-cache-* && rm -rf /tmp/haste-map-react-native-packager-*",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "iphone5": "react-native run-ios --simulator='iPhone 5s'",
     "iphone7": "react-native run-ios --simulator='iPhone 7'",
     "iphone8p": "react-native run-ios --simulator='iPhone 8 Plus'",
-    "iphonexr": "react-native run-ios --simulator='iPhone Xʀ'"
+    "iphonexr": "react-native run-ios --simulator='iPhone Xʀ'",
+    "clean-android": "watchman watch-del-all && rm -rf node_modules && rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/npm-* && yarn install && ./android/gradlew clean -p ./android/ && yarn start -- --reset-cache",
+    "clean-ios": "watchman watch-del-all && rm -rf node_modules && rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/npm-* && yarn install && rm -rf ios/build && yarn start -- --reset-cache"
   },
   "dependencies": {
     "prop-types": "^15.7.2",
