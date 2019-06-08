@@ -12,7 +12,6 @@ import {
   ImageBackground,
   Text,
   TouchableOpacity,
-  Dimensions,
   LayoutAnimation
 } from 'react-native'
 import { SafeAreaView } from 'react-navigation'
@@ -20,7 +19,12 @@ import bg from '../../assets/images/onboarding/bg.png'
 import intro from '../../assets/images/onboarding/intro.png'
 import location from '../../assets/images/onboarding/location.png'
 import notification from '../../assets/images/onboarding/notification.png'
-
+import {
+  fontScale,
+  scaleWidth,
+  scaleHeight,
+  scaleY
+} from '../../utils/scaleUtils'
 import Colors from '../../styles/colors'
 
 const onboardingContents = [
@@ -44,15 +48,6 @@ const onboardingContents = [
   }
 ]
 
-const screenHeight = Dimensions.get('window').height
-const screenWidth = Dimensions.get('window').width
-
-const scaleWidth = width => (width * screenWidth) / 375
-const scaleHeight = height => (height * screenHeight) / 812
-const scaleY = y => (screenHeight / 812) * y
-const scaleX = x => (screenWidth / 375) * x
-const fontScale = size => (screenWidth / 375) * size
-
 export default class Onboarding extends Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired
@@ -65,7 +60,7 @@ export default class Onboarding extends Component {
 
   navigate = event => {
     const { navigation } = this.props
-    navigation.navigate('Home', event)
+    navigation.navigate('Profile', event)
   }
 
   goNext = () => {
