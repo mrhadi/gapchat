@@ -1,0 +1,71 @@
+{
+  "name": "GapChat",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "lint": "eslint .",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "iphone5": "react-native run-ios --simulator='iPhone 5s'",
+    "iphone7": "react-native run-ios --simulator='iPhone 7'",
+    "iphone8p": "react-native run-ios --simulator='iPhone 8 Plus'",
+    "iphonexr": "react-native run-ios --simulator='iPhone Xʀ'"
+  },
+  "dependencies": {
+    "prop-types": "^15.7.2",
+    "react": "16.8.3",
+    "react-native": "0.59.8",
+    "react-native-gesture-handler": "^1.3.0",
+    "react-native-global-props": "^1.1.5",
+    "react-navigation": "^3.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/runtime": "^7.4.5",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.8.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-flowtype": "^3.9.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-react-native": "^3.7.0",
+    "husky": ">=1",
+    "jest": "^24.8.0",
+    "lint-staged": ">=8",
+    "metro-react-native-babel-preset": "^0.54.1",
+    "prettier": "1.17.1",
+    "react-test-renderer": "16.8.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "yarn run prettier --write",
+      "git add"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
+  }
+}
