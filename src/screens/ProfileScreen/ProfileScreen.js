@@ -6,11 +6,21 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { SafeAreaView } from 'react-navigation'
-import { ImageBackground, StyleSheet, TouchableOpacity, CameraRoll, Alert } from 'react-native'
+import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native'
+import ImagePicker from 'react-native-image-picker'
 import IcoMoon from '../../../icomoon/IcoMoon'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
-import { fontScale, scaleWidth, scaleY} from '../../utils/scaleUtils'
+import { fontScale, scaleWidth, scaleY } from '../../utils/scaleUtils'
+
+const options = {
+  title: 'Select Your Profile Photo',
+  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  storageOptions: {
+    skipBackup: true,
+    path: 'images'
+  }
+}
 
 export default class ProfileScreen extends Component {
   static propTypes = {
@@ -28,17 +38,22 @@ export default class ProfileScreen extends Component {
   }
 
   _handleButtonPress = () => {
-    CameraRoll.getPhotos({
-      first: 20,
-      assetType: 'Photos',
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response)
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker')
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error)
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton)
+      } else {
+        const source = { uri: response.uri }
+
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+      }
     })
-      .then(r => {
-        Alert.alert(r.edges)
-        //this.setState({ photos: r.edges });
-      })
-      .catch((err) => {
-        //Error Loading Images
-      })
   }
 
   render() {
