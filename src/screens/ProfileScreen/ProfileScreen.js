@@ -12,14 +12,15 @@ import {
   TouchableOpacity,
   Modal,
   View,
-  ScrollView,
   Image,
+  FlatList,
   Text
 } from 'react-native'
 import IcoMoon from '../../../icomoon/IcoMoon'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import { fontScale, scaleWidth, scaleY } from '../../utils/scaleUtils'
+import Popup from '../../components/Popup/Popup'
 
 const AVATAR_COUNT = 110
 
@@ -29,6 +30,7 @@ export default class ProfileScreen extends Component {
   }
 
   constructor(props) {
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
     super(props)
     this.state = {
       modalVisible: false,
@@ -47,9 +49,35 @@ export default class ProfileScreen extends Component {
     navigation.navigate('Home', event)
   }
 
-  openAvatarBrowser = () => {
+  showAvatarBrowser = () => {
     this.setState({ modalVisible: true })
   }
+
+  hideAvatarBrowser = () => {
+    this.setState({ modalVisible: false })
+  }
+
+  renderAvatar = avatar => (
+    <View style={styles.avatarContainer}>
+      <Image key={avatar} source={{ uri: `${avatar}` }} style={styles.avatar} />
+    </View>
+  )
+
+  popupContent = data => (
+    <View style={styles.popupContent}>
+      <Text style={styles.popupTitle}>Choose your Avatar</Text>
+      <FlatList
+        data={data}
+        renderItem={({ item }) => this.renderAvatar(item)}
+        horizontal={false}
+        numColumns={4}
+        keyboardDismissMode="on-drag"
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
+  )
 
   render() {
     const { modalVisible, avatarImages } = this.state
@@ -58,7 +86,7 @@ export default class ProfileScreen extends Component {
         <SafeAreaView style={styles.container}>
           <TouchableOpacity
             style={styles.addPhoto}
-            onPress={this.openAvatarBrowser}
+            onPress={this.showAvatarBrowser}
           >
             <IcoMoon
               name="add-profile-photo"
@@ -73,27 +101,11 @@ export default class ProfileScreen extends Component {
             onRequestClose={() => {}}
           >
             <View style={styles.modalContainer}>
-              <View style={styles.popupView}>
-                <ScrollView
-                  keyboardDismissMode="on-drag"
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{
-                    flexDirection: 'row',
-                    flexWrap: 'wrap'
-                  }}
-                >
-                  {avatarImages.map(image => (
-                    <View style={styles.avatarContainer}>
-                      <Image
-                        key={image}
-                        source={{ uri: `${image}` }}
-                        style={styles.avatar}
-                      />
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
+              <Popup
+                style={styles.popupView}
+                content={this.popupContent(avatarImages)}
+                onReturnClick={this.hideAvatarBrowser}
+              />
             </View>
           </Modal>
         </SafeAreaView>
@@ -129,13 +141,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   popupView: {
-    backgroundColor: 'white',
-    borderRadius: 6,
-    borderColor: 'white',
-    borderWidth: 1,
-    width: '75%',
-    height: '60%',
-    padding: 10
+    width: 250,
+    height: 350
+  },
+  popupContent: {
+    width: 230,
+    height: 310
   },
   avatar: {
     width: 42,
@@ -149,6 +160,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    elevation: 3,
     margin: 5
+  },
+  popupTitle: {
+    alignSelf: 'center',
+    fontSize: fontScale(14),
+    color: Colors.textViolet,
+    marginVertical: 10
   }
 })
