@@ -11,37 +11,22 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  View,
-  Image,
-  FlatList,
-  Text
+  View
 } from 'react-native'
 import IcoMoon from '../../../icomoon/IcoMoon'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import { fontScale, scaleWidth, scaleY } from '../../utils/scaleUtils'
 import Popup from '../../components/Popup/Popup'
-
-const AVATAR_COUNT = 110
+import AvatarBrowser from '../../components/AvatarBrowser/AvatarBrowser'
 
 export default class ProfileScreen extends Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired
   }
 
-  constructor(props) {
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
-    super(props)
-    this.state = {
-      modalVisible: false,
-      avatarImages: Array.from(
-        {
-          length: AVATAR_COUNT
-        },
-        (_, i) =>
-          'avatar_' + '0'.repeat(3 - (i + 1).toString().length) + (i + 1)
-      )
-    }
+  state = {
+    modalVisible: false
   }
 
   navigate = event => {
@@ -57,30 +42,8 @@ export default class ProfileScreen extends Component {
     this.setState({ modalVisible: false })
   }
 
-  renderAvatar = avatar => (
-    <View style={styles.avatarContainer}>
-      <Image key={avatar} source={{ uri: `${avatar}` }} style={styles.avatar} />
-    </View>
-  )
-
-  popupContent = data => (
-    <View style={styles.popupContent}>
-      <Text style={styles.popupTitle}>Choose your Avatar</Text>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => this.renderAvatar(item)}
-        horizontal={false}
-        numColumns={4}
-        keyboardDismissMode="on-drag"
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(item, index) => index.toString()}
-      />
-    </View>
-  )
-
   render() {
-    const { modalVisible, avatarImages } = this.state
+    const { modalVisible } = this.state
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView style={styles.container}>
@@ -103,7 +66,7 @@ export default class ProfileScreen extends Component {
             <View style={styles.modalContainer}>
               <Popup
                 style={styles.popupView}
-                content={this.popupContent(avatarImages)}
+                content={<AvatarBrowser />}
                 onReturnClick={this.hideAvatarBrowser}
               />
             </View>
@@ -141,32 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   popupView: {
-    width: 250,
+    width: 280,
     height: 350
-  },
-  popupContent: {
-    width: 230,
-    height: 310
-  },
-  avatar: {
-    width: 42,
-    height: 42
-  },
-  avatarContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 80,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-    margin: 5
-  },
-  popupTitle: {
-    alignSelf: 'center',
-    fontSize: fontScale(14),
-    color: Colors.textViolet,
-    marginVertical: 10
   }
 })
