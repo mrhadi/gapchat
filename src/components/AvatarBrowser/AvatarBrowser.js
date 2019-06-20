@@ -68,6 +68,7 @@ export default class AvatarBrowser extends PureComponent {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
+          initialNumToRender={25}
         />
       </View>
     )
