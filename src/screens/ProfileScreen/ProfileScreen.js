@@ -31,6 +31,10 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 export default class ProfileScreen extends Component {
+  static navigationOptions = {
+    headerLeft: null
+  }
+
   static propTypes = {
     navigation: PropTypes.object.isRequired
   }

@@ -11,8 +11,7 @@ import {
   Image,
   ImageBackground,
   Text,
-  TouchableOpacity,
-  LayoutAnimation
+  TouchableOpacity
 } from 'react-native'
 import { SafeAreaView } from 'react-navigation'
 import bg from '../../assets/images/onboarding/bg.png'
@@ -64,7 +63,6 @@ export default class Onboarding extends Component {
   }
 
   goNext = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear)
     const { indexContent } = this.state
     indexContent === onboardingContents.length - 1
       ? this.navigate()
