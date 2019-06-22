@@ -9,11 +9,11 @@ const AVATAR_COUNT = 110
 
 export default class AvatarBrowser extends PureComponent {
   static defaultProps = {
-    onClick: () => {}
+    onSelected: () => {}
   }
 
   static propTypes = {
-    onClick: PropTypes.func
+    onSelected: PropTypes.func
   }
 
   state = {
@@ -35,15 +35,7 @@ export default class AvatarBrowser extends PureComponent {
   }
 
   handleOnClick = avatar => {
-    const { avatarImages } = this.state
-
-    const updatedObjects = avatarImages.map(obj =>
-      obj.name === avatar.name
-        ? { ...obj, isSelected: true }
-        : { ...obj, isSelected: false }
-    )
-
-    this.setState({ avatarImages: updatedObjects })
+    this.props.onSelected(avatar)
   }
 
   renderAvatar = avatar => (

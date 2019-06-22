@@ -11,7 +11,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  View
+  View,
+  Image
 } from 'react-native'
 import IcoMoon from '../../../icomoon/IcoMoon'
 import bg from '../../assets/images/profile/bg.png'
@@ -26,7 +27,8 @@ export default class ProfileScreen extends Component {
   }
 
   state = {
-    modalVisible: false
+    modalVisible: false,
+    userAvatar: ''
   }
 
   navigate = event => {
@@ -42,8 +44,13 @@ export default class ProfileScreen extends Component {
     this.setState({ modalVisible: false })
   }
 
+  handleAvatarSelected = avatar => {
+    this.setState({ userAvatar: avatar })
+    this.hideAvatarBrowser()
+  }
+
   render() {
-    const { modalVisible } = this.state
+    const { modalVisible, userAvatar } = this.state
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView style={styles.container}>
@@ -51,11 +58,20 @@ export default class ProfileScreen extends Component {
             style={styles.addPhoto}
             onPress={this.showAvatarBrowser}
           >
-            <IcoMoon
-              name="add-profile-photo"
-              size={fontScale(24)}
-              color="white"
-            />
+            {userAvatar === '' ? (
+              <IcoMoon
+                name="add-profile-photo"
+                size={fontScale(24)}
+                color="white"
+              />
+            ) : (
+              <View style={styles.avatarContainer}>
+                <Image
+                  style={styles.userAvatar}
+                  source={{ uri: `${userAvatar.name}` }}
+                />
+              </View>
+            )}
           </TouchableOpacity>
           <Modal
             animationType="fade"
@@ -66,7 +82,12 @@ export default class ProfileScreen extends Component {
             <View style={styles.modalContainer}>
               <Popup
                 style={styles.popupView}
-                content={<AvatarBrowser />}
+                content={
+                  <AvatarBrowser
+                    onSelected={avatar => this.handleAvatarSelected(avatar)}
+                  />
+                }
+                returnButtonTitle="Return"
                 onReturnClick={this.hideAvatarBrowser}
               />
             </View>
@@ -89,7 +110,7 @@ const styles = StyleSheet.create({
   addPhoto: {
     height: scaleWidth(80),
     width: scaleWidth(80),
-    borderRadius: scaleWidth(180),
+    borderRadius: scaleWidth(160),
     backgroundColor: Colors.purple,
     borderWidth: 1,
     borderColor: Colors.purple,
@@ -106,5 +127,19 @@ const styles = StyleSheet.create({
   popupView: {
     width: 280,
     height: 350
+  },
+  userAvatar: {
+    width: scaleWidth(70),
+    height: scaleWidth(70)
+  },
+  avatarContainer: {
+    height: scaleWidth(82),
+    width: scaleWidth(82),
+    borderRadius: scaleWidth(164),
+    borderWidth: 1,
+    borderColor: Colors.inactiveGrey,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })

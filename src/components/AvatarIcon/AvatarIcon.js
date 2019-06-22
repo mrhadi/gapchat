@@ -16,23 +16,38 @@ export default class AvatarIcon extends PureComponent {
     onClick: PropTypes.func
   }
 
+  state = {
+    selected: false
+  }
+
+  componentDidMount() {
+    const { isSelected } = this.props
+    this.setState({ selected: isSelected })
+  }
+
+  handleOnPress = () => {
+    this.setState({ selected: true })
+    this.props.onClick()
+  }
+
   render() {
-    const { avatar, isSelected, onClick } = this.props
+    const { avatar } = this.props
+    const { selected } = this.state
     return (
       <TouchableOpacity
         style={
-          isSelected
+          selected
             ? [styles.avatarContainer, styles.avatarContainerSelected]
             : styles.avatarContainer
         }
-        onPress={onClick}
+        onPress={this.handleOnPress}
       >
         <Image
           key={avatar}
           source={{ uri: `${avatar}` }}
-          style={isSelected ? styles.avatarSelected : styles.avatar}
+          style={selected ? styles.avatarSelected : styles.avatar}
         />
-        {isSelected && (
+        {selected && (
           <Icon
             name="arrow-down-left"
             size={20}
