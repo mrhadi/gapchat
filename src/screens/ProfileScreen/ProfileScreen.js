@@ -13,7 +13,6 @@ import {
   View,
   Image,
   Text,
-  TextInput,
   Switch,
   ScrollView,
   Dimensions
@@ -31,7 +30,7 @@ import {
   scaleY
 } from '../../utils/scaleUtils'
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
-import EvilIcons from 'react-native-vector-icons/EvilIcons'
+import Nickname from './Nickname/Nickname'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const { height } = Dimensions.get('window')
@@ -101,31 +100,6 @@ export default class ProfileScreen extends Component {
           )}
         </TouchableOpacity>
         <Text style={styles.addPhotoText}>Profile avatar</Text>
-      </View>
-    )
-  }
-
-  renderNickName = () => {
-    const { userNickname } = this.state
-    return (
-      <View style={styles.nickNameContainer}>
-        <EvilIcons
-          style={{ color: Colors.textViolet }}
-          name="user"
-          size={fontScale(26)}
-        />
-        <TextInput
-          style={styles.nickNameTextInput}
-          placeholder="Enter your nickname"
-          returnKeyLabel="Done"
-          returnKeyType="go"
-          spellCheck={false}
-          autoCapitalize="none"
-          maxLength={20}
-          onChangeText={userNickname => this.setState({ userNickname })}
-          onBlur={this.handleTextBlur}
-          value={userNickname}
-        />
       </View>
     )
   }
@@ -204,8 +178,8 @@ export default class ProfileScreen extends Component {
     )
   }
 
-  handleTextBlur = () => {
-    this.setState({ errorMessage: '' })
+  handleNicknameBlur = nickname => {
+    this.setState({ errorMessage: '', userNickname: nickname })
   }
 
   handleOnSave = () => {
@@ -226,7 +200,7 @@ export default class ProfileScreen extends Component {
   }
 
   render() {
-    const { modalVisible, errorMessage } = this.state
+    const { modalVisible, errorMessage, userNickname } = this.state
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
@@ -237,7 +211,10 @@ export default class ProfileScreen extends Component {
           >
             <View style={styles.container}>
               {this.renderProfilePhoto()}
-              {this.renderNickName()}
+              <Nickname
+                nickname={userNickname}
+                onBlur={nickname => this.handleNicknameBlur(nickname)}
+              />
               {this.renderSettings()}
             </View>
           </ScrollView>
@@ -313,30 +290,6 @@ const styles = StyleSheet.create({
     marginTop: scaleHeight(10),
     fontSize: fontScale(12),
     color: Colors.textViolet
-  },
-  nickNameContainer: {
-    flexDirection: 'row',
-    marginTop: scaleHeight(30),
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'white',
-    width: scaleWidth(220),
-    height: scaleWidth(50),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
-    alignItems: 'center',
-    padding: 10
-  },
-  nickNameTextInput: {
-    flex: 1,
-    height: scaleWidth(40),
-    fontSize: fontScale(14),
-    color: Colors.textViolet,
-    marginLeft: scaleWidth(10)
   },
   button: {
     flexDirection: 'row',
