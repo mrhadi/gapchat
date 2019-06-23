@@ -42,13 +42,11 @@ export default class Settings extends PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { userActive, userFurthestDistance, userNearestDistance } = this.state
     if (
-      prevProps.defaultSettings.userActive === userActive &&
-      prevProps.defaultSettings.userFurthestDistance === userFurthestDistance &&
-      prevProps.defaultSettings.userNearestDistance === userNearestDistance
+      JSON.stringify(prevProps.defaultSettings) === JSON.stringify(this.state)
     )
       return
+    const { userActive, userFurthestDistance, userNearestDistance } = this.state
     this.props.onSettingsChanged({
       userActive: userActive,
       userNearestDistance: userNearestDistance,

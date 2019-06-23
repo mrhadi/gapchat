@@ -80,8 +80,8 @@ export default class ProfileScreen extends Component {
 
     Alert.alert(this.state)
 
-    // const { navigation } = this.props
-    // navigation.navigate('Home')
+    const { navigation } = this.props
+    navigation.navigate('Home')
   }
 
   handleSettingsChanged = settings => {
