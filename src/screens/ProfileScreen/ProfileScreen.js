@@ -11,7 +11,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Image,
   Text,
   Switch,
   ScrollView,
@@ -19,18 +18,13 @@ import {
 } from 'react-native'
 import Slider from '@react-native-community/slider'
 import LinearGradient from 'react-native-linear-gradient'
-import IcoMoon from '../../../icomoon/IcoMoon'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import iPhoneX from '../../utils/iPhoneX'
-import {
-  fontScale,
-  scaleHeight,
-  scaleWidth,
-  scaleY
-} from '../../utils/scaleUtils'
+import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
 import Nickname from './Nickname/Nickname'
+import ProfilePhoto from './ProfilePhoto/ProfilePhoto'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const { height } = Dimensions.get('window')
@@ -74,34 +68,6 @@ export default class ProfileScreen extends Component {
 
   handleFurthestChange = value => {
     this.setState({ userFurthestDistance: value })
-  }
-
-  renderProfilePhoto = () => {
-    const { userAvatar } = this.state
-    return (
-      <View style={styles.profilePhoto}>
-        <TouchableOpacity
-          style={styles.addPhoto}
-          onPress={this.showAvatarBrowser}
-        >
-          {userAvatar === '' ? (
-            <IcoMoon
-              name="add-profile-photo"
-              size={fontScale(24)}
-              color="white"
-            />
-          ) : (
-            <View style={styles.avatarContainer}>
-              <Image
-                style={styles.userAvatar}
-                source={{ uri: `${userAvatar.name}` }}
-              />
-            </View>
-          )}
-        </TouchableOpacity>
-        <Text style={styles.addPhotoText}>Profile avatar</Text>
-      </View>
-    )
   }
 
   renderError = errorMessage => (
@@ -200,7 +166,7 @@ export default class ProfileScreen extends Component {
   }
 
   render() {
-    const { modalVisible, errorMessage, userNickname } = this.state
+    const { modalVisible, errorMessage, userNickname, userAvatar } = this.state
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
@@ -210,7 +176,10 @@ export default class ProfileScreen extends Component {
             style={{ marginTop: 45 }}
           >
             <View style={styles.container}>
-              {this.renderProfilePhoto()}
+              <ProfilePhoto
+                onPress={this.showAvatarBrowser}
+                userAvatar={userAvatar}
+              />
               <Nickname
                 nickname={userNickname}
                 onBlur={nickname => this.handleNicknameBlur(nickname)}
@@ -256,40 +225,6 @@ const styles = StyleSheet.create({
     height: height,
     alignItems: 'center',
     marginHorizontal: 20
-  },
-  addPhoto: {
-    height: scaleWidth(80),
-    width: scaleWidth(80),
-    borderRadius: scaleWidth(160),
-    backgroundColor: Colors.purple,
-    borderWidth: 1,
-    borderColor: Colors.purple,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: scaleY(20)
-  },
-  userAvatar: {
-    width: scaleWidth(70),
-    height: scaleWidth(70)
-  },
-  avatarContainer: {
-    height: scaleWidth(82),
-    width: scaleWidth(82),
-    borderRadius: scaleWidth(164),
-    borderWidth: 1,
-    borderColor: Colors.inactiveGrey,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  profilePhoto: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  addPhotoText: {
-    marginTop: scaleHeight(10),
-    fontSize: fontScale(12),
-    color: Colors.textViolet
   },
   button: {
     flexDirection: 'row',

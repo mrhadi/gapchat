@@ -8,12 +8,8 @@ import AvatarIcon from '../AvatarIcon/AvatarIcon'
 const AVATAR_COUNT = 110
 
 export default class AvatarBrowser extends PureComponent {
-  static defaultProps = {
-    onSelected: () => {}
-  }
-
   static propTypes = {
-    onSelected: PropTypes.func
+    onSelected: PropTypes.func.isRequired
   }
 
   state = {
@@ -35,7 +31,7 @@ export default class AvatarBrowser extends PureComponent {
   }
 
   handleOnClick = avatar => {
-    this.props.onSelected(avatar)
+    this.props.onSelected(avatar.name)
   }
 
   renderAvatar = avatar => (
