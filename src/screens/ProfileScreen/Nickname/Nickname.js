@@ -21,8 +21,8 @@ export default class Nickname extends PureComponent {
   }
 
   handleTextBlur = () => {
-    const { nickname } = this.props
-    this.props.onBlur(nickname)
+    const { userNickname } = this.state
+    this.props.onBlur(userNickname)
   }
 
   render() {

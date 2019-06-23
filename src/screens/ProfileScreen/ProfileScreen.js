@@ -12,23 +12,22 @@ import {
   TouchableOpacity,
   View,
   Text,
-  Switch,
   ScrollView,
-  Dimensions
+  Dimensions,
+  Alert
 } from 'react-native'
-import Slider from '@react-native-community/slider'
 import LinearGradient from 'react-native-linear-gradient'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import iPhoneX from '../../utils/iPhoneX'
 import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
+import Settings from './Settings/Settings'
 import Nickname from './Nickname/Nickname'
 import ProfilePhoto from './ProfilePhoto/ProfilePhoto'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 const { height } = Dimensions.get('window')
-const EARTH_CIRCUMFERENCE = 40075
 
 export default class ProfileScreen extends Component {
   static navigationOptions = {
@@ -62,88 +61,6 @@ export default class ProfileScreen extends Component {
     this.hideAvatarBrowser()
   }
 
-  handleNearestChange = value => {
-    this.setState({ userNearestDistance: value })
-  }
-
-  handleFurthestChange = value => {
-    this.setState({ userFurthestDistance: value })
-  }
-
-  renderError = errorMessage => (
-    <View style={styles.errorContainer}>
-      <AntDesign
-        style={{ color: Colors.errorRed }}
-        name="exclamationcircle"
-        size={fontScale(18)}
-      />
-      <Text style={styles.errorText}>{errorMessage}</Text>
-    </View>
-  )
-
-  renderSettings = () => {
-    const { userActive, userNearestDistance, userFurthestDistance } = this.state
-    return (
-      <View style={styles.settingsContainer}>
-        <View style={styles.featureRow}>
-          <Text style={styles.featureTitle}>Active</Text>
-          <Switch
-            trackColor={{
-              true: Colors.purple,
-              false: Colors.buttonGrey
-            }}
-            value={userActive}
-            thumbColor={Colors.buttonGrey}
-            onValueChange={() => this.setState({ userActive: !userActive })}
-          />
-        </View>
-        <Text style={styles.featureDescription}>
-          Set if you are availabe for chatting or not.
-        </Text>
-        <View style={{ height: 15 }} />
-        <View style={styles.featureRow}>
-          <Text style={styles.featureTitle}>Nearest Distance</Text>
-          <Text style={styles.km}>{userNearestDistance} m</Text>
-        </View>
-        <Text style={styles.featureDescription}>
-          Choose the nearest distance you want us fo find your potential
-          friends.
-        </Text>
-        <Slider
-          style={{ width: '100%', height: scaleHeight(40) }}
-          minimumValue={10}
-          step={10}
-          onValueChange={value => this.handleNearestChange(value)}
-          value={userNearestDistance}
-          maximumValue={1000}
-          minimumTrackTintColor={Colors.errorRed}
-          maximumTrackTintColor={Colors.sliderGrey}
-          thumbTintColor={Colors.sliderViolet}
-        />
-        <View style={{ height: 15 }} />
-        <View style={styles.featureRow}>
-          <Text style={styles.featureTitle}>Furthest Distance</Text>
-          <Text style={styles.km}>{userFurthestDistance} km</Text>
-        </View>
-        <Text style={styles.featureDescription}>
-          Choose the furthest distance you want us fo find your potential
-          friends.
-        </Text>
-        <Slider
-          style={{ width: '100%', height: scaleHeight(30) }}
-          minimumValue={10}
-          step={10}
-          onValueChange={value => this.handleFurthestChange(value)}
-          value={userFurthestDistance}
-          maximumValue={Math.round(EARTH_CIRCUMFERENCE / 2)}
-          minimumTrackTintColor={Colors.textViolet}
-          maximumTrackTintColor={Colors.sliderGrey}
-          thumbTintColor={Colors.sliderViolet}
-        />
-      </View>
-    )
-  }
-
   handleNicknameBlur = nickname => {
     this.setState({ errorMessage: '', userNickname: nickname })
   }
@@ -161,18 +78,53 @@ export default class ProfileScreen extends Component {
       return
     }
 
-    const { navigation } = this.props
-    navigation.navigate('Home')
+    Alert.alert(this.state)
+
+    // const { navigation } = this.props
+    // navigation.navigate('Home')
   }
 
+  handleSettingsChanged = settings => {
+    this.setState({
+      userActive: settings.userActive,
+      userNearestDistance: settings.userNearestDistance,
+      userFurthestDistance: settings.userFurthestDistance
+    })
+  }
+
+  renderError = errorMessage => (
+    <View style={styles.errorContainer}>
+      <AntDesign
+        style={{ color: Colors.errorRed }}
+        name="exclamationcircle"
+        size={fontScale(18)}
+      />
+      <Text style={styles.errorText}>{errorMessage}</Text>
+    </View>
+  )
+
   render() {
-    const { modalVisible, errorMessage, userNickname, userAvatar } = this.state
+    const {
+      modalVisible,
+      errorMessage,
+      userNickname,
+      userAvatar,
+      userActive,
+      userNearestDistance,
+      userFurthestDistance
+    } = this.state
+    const defaultSettings = {
+      userActive: userActive,
+      userNearestDistance: userNearestDistance,
+      userFurthestDistance: userFurthestDistance
+    }
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
           <ScrollView
             keyboardDismissMode="on-drag"
             showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             style={{ marginTop: 45 }}
           >
             <View style={styles.container}>
@@ -184,7 +136,12 @@ export default class ProfileScreen extends Component {
                 nickname={userNickname}
                 onBlur={nickname => this.handleNicknameBlur(nickname)}
               />
-              {this.renderSettings()}
+              <Settings
+                onSettingsChanged={settings =>
+                  this.handleSettingsChanged(settings)
+                }
+                defaultSettings={defaultSettings}
+              />
             </View>
           </ScrollView>
         </SafeAreaView>
@@ -256,45 +213,6 @@ const styles = StyleSheet.create({
     fontSize: fontScale(12),
     fontWeight: '500',
     marginLeft: scaleWidth(10)
-  },
-  settingsContainer: {
-    marginTop: scaleHeight(30),
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: 'white',
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
-    alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 30
-  },
-  featureRow: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  featureTitle: {
-    color: Colors.textViolet,
-    fontSize: fontScale(14),
-    fontWeight: '500'
-  },
-  km: {
-    color: Colors.textViolet,
-    fontSize: fontScale(12),
-    fontWeight: '500'
-  },
-  featureDescription: {
-    color: Colors.textGrey,
-    fontSize: fontScale(11),
-    fontWeight: 'normal',
-    alignSelf: 'flex-start',
-    width: scaleWidth(200)
   },
   saveContainer: {
     width: '100%',
