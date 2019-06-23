@@ -10,7 +10,6 @@ import {
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
-  Modal,
   View,
   Image,
   Text,
@@ -31,8 +30,7 @@ import {
   scaleWidth,
   scaleY
 } from '../../utils/scaleUtils'
-import Popup from '../../components/Popup/Popup'
-import AvatarBrowser from '../../components/AvatarBrowser/AvatarBrowser'
+import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
@@ -106,28 +104,6 @@ export default class ProfileScreen extends Component {
       </View>
     )
   }
-
-  renderAvatarBrowser = modalVisible => (
-    <Modal
-      animationType="fade"
-      transparent
-      visible={modalVisible}
-      onRequestClose={() => {}}
-    >
-      <View style={styles.modalContainer}>
-        <Popup
-          style={styles.popupView}
-          content={
-            <AvatarBrowser
-              onSelected={avatar => this.handleAvatarSelected(avatar)}
-            />
-          }
-          returnButtonTitle="Return"
-          onReturnClick={this.hideAvatarBrowser}
-        />
-      </View>
-    </Modal>
-  )
 
   renderNickName = () => {
     const { userNickname } = this.state
@@ -282,7 +258,13 @@ export default class ProfileScreen extends Component {
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </LinearGradient>
-        {modalVisible && this.renderAvatarBrowser(modalVisible)}
+        {modalVisible && (
+          <AvatarBrowserModal
+            modalVisible={modalVisible}
+            onReturnClick={this.hideAvatarBrowser}
+            onAvatarSelected={this.handleAvatarSelected}
+          />
+        )}
       </ImageBackground>
     )
   }
@@ -308,16 +290,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: scaleY(20)
-  },
-  modalContainer: {
-    backgroundColor: 'rgba(83,85,114,0.75)',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  popupView: {
-    width: 280,
-    height: 350
   },
   userAvatar: {
     width: scaleWidth(70),
