@@ -19,6 +19,7 @@
     "clean-ios": "watchman watch-del-all && rm -rf node_modules && rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/npm-* && yarn install && rm -rf ios/build && yarn start -- --reset-cache"
   },
   "dependencies": {
+    "@react-native-community/slider": "^1.1.4",
     "eslint-plugin-jest": "^22.7.0",
     "prop-types": "^15.7.2",
     "react": "16.8.3",
