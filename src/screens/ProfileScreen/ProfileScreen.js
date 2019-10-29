@@ -13,19 +13,23 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions,
-  Alert
+  Dimensions
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
+import { addUser } from '../../services/userAPIs'
+
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import iPhoneX from '../../utils/iPhoneX'
 import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
+
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
 import Settings from './Settings/Settings'
 import Nickname from './Nickname/Nickname'
 import ProfilePhoto from './ProfilePhoto/ProfilePhoto'
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
 const { height } = Dimensions.get('window')
 
@@ -40,6 +44,7 @@ export default class ProfileScreen extends Component {
 
   state = {
     modalVisible: false,
+    showLoading: false,
     errorMessage: '',
     userAvatar: '',
     userNickname: '',
@@ -66,7 +71,12 @@ export default class ProfileScreen extends Component {
   }
 
   handleOnSave = () => {
-    const { userAvatar, userNickname } = this.state
+    const {
+      userAvatar,
+      userNickname,
+      userNearestDistance,
+      userFurthestDistance
+    } = this.state
 
     if (userAvatar === '') {
       this.setState({ errorMessage: 'Add a profile avatar' })
@@ -78,10 +88,21 @@ export default class ProfileScreen extends Component {
       return
     }
 
-    Alert.alert(this.state)
+    this.setState({ showLoading: true })
 
-    const { navigation } = this.props
-    navigation.navigate('Home')
+    addUser({
+      nickName: userNickname,
+      avatar: userAvatar,
+      nearest: userNearestDistance,
+      furthest: userFurthestDistance
+    }).then(response => {
+      this.setState({ showLoading: false })
+
+      if (response && response.data) {
+        const { navigation } = this.props
+        navigation.navigate('Home')
+      }
+    })
   }
 
   handleSettingsChanged = settings => {
@@ -106,6 +127,7 @@ export default class ProfileScreen extends Component {
   render() {
     const {
       modalVisible,
+      showLoading,
       errorMessage,
       userNickname,
       userAvatar,
@@ -161,6 +183,7 @@ export default class ProfileScreen extends Component {
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </LinearGradient>
+        {showLoading && <LoadingSpinner />}
         {modalVisible && (
           <AvatarBrowserModal
             modalVisible={modalVisible}
