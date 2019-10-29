@@ -4,8 +4,8 @@ const addUser = async user => {
   return axios.post('/user', user)
 }
 
-const getUser = async user => {
-  return axios.get('/user', user)
+const getUser = async () => {
+  return axios.get('/user')
 }
 
 export { addUser, getUser }

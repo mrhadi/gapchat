@@ -62,7 +62,7 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
-    initialRouteName: 'Onboarding',
+    initialRouteName: 'Home',
     headerLayoutPreset: 'center'
   }
 )
