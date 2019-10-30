@@ -5,10 +5,17 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
+import Geolocation from 'react-native-geolocation-service'
 import globalStyles from '../../styles/global'
 
 import { getUser } from '../../services/userAPIs'
+import { updateLocation, isAgentFree } from '../../utils/locationAgent'
+import Colors from '../../styles/colors'
+import iPhoneX from '../../utils/iPhoneX'
+import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
+
+let watchID
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -20,10 +27,48 @@ export default class HomeScreen extends Component {
   }
 
   state = {
-    user: null
+    user: null,
+    location: null,
+    speed: 0,
+    latitude: 0,
+    longitude: 0
   }
 
   componentDidMount() {
+    watchID = Geolocation.watchPosition(
+      position => {
+        console.log(position)
+        if (position.coords) {
+          if (isAgentFree) {
+            updateLocation({
+              speed: position.coords.speed,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            })
+          }
+          this.setState({ speed: position.coords.speed })
+          this.setState({ latitude: position.coords.latitude })
+          this.setState({ longitude: position.coords.longitude })
+        }
+      },
+      error => {
+        this.setState({ location: error })
+      },
+      { enableHighAccuracy: true, distanceFilter: 5 }
+    )
+
+    /*
+    Geolocation.getCurrentPosition(
+      position => {
+        this.setState({ location: position })
+      },
+      error => {
+        this.setState({ location: error })
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    )
+    */
+
     getUser().then(response => {
       if (response.data) {
         this.setState({ user: response.data })
@@ -34,21 +79,35 @@ export default class HomeScreen extends Component {
     })
   }
 
+  componentWillUnmount() {
+    watchID != null && Geolocation.clearWatch(watchID)
+  }
+
   render() {
-    const { user } = this.state
+    const { user, speed, latitude, longitude } = this.state
     return (
-      <View style={globalStyles.mainContainer}>
+      <View style={styles.container}>
         {user && (
           <View>
-            <Text>{user.active}</Text>
-            <Text>{user.avatar}</Text>
             <Text>{user.deviceId}</Text>
             <Text>{user.nickName}</Text>
             <Text>{user.nearest}</Text>
             <Text>{user.furthest}</Text>
           </View>
         )}
+        <View>
+          <Text>{speed}</Text>
+          <Text>{latitude}</Text>
+          <Text>{longitude}</Text>
+        </View>
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 30
+  }
+})
