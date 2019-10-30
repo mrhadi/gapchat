@@ -5,15 +5,17 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Text, View } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  PermissionsAndroid
+} from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
-import globalStyles from '../../styles/global'
 
 import { getUser } from '../../services/userAPIs'
 import { updateLocation, isAgentFree } from '../../utils/locationAgent'
-import Colors from '../../styles/colors'
-import iPhoneX from '../../utils/iPhoneX'
-import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
 
 let watchID
 
@@ -28,13 +30,38 @@ export default class HomeScreen extends Component {
 
   state = {
     user: null,
-    location: null,
     speed: 0,
     latitude: 0,
     longitude: 0
   }
 
-  componentDidMount() {
+  requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'I need your location mate!',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK'
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the camera')
+      } else {
+        console.log('Camera permission denied')
+      }
+    } catch (err) {
+      console.warn(err)
+    }
+  }
+
+  async componentDidMount() {
+    if (Platform.OS !== 'ios') {
+      await this.requestLocationPermission()
+    }
+
     watchID = Geolocation.watchPosition(
       position => {
         console.log(position)
@@ -52,7 +79,7 @@ export default class HomeScreen extends Component {
         }
       },
       error => {
-        this.setState({ location: error })
+        console.log(error)
       },
       { enableHighAccuracy: true, distanceFilter: 5 }
     )
