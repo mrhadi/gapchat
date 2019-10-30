@@ -15,7 +15,7 @@ import {
 import Geolocation from 'react-native-geolocation-service'
 
 import { getUser } from '../../services/userAPIs'
-import { updateLocation, isAgentFree } from '../../utils/locationAgent'
+import { updateLocation } from '../../utils/locationAgent'
 
 let watchID
 
@@ -32,7 +32,8 @@ export default class HomeScreen extends Component {
     user: null,
     speed: 0,
     latitude: 0,
-    longitude: 0
+    longitude: 0,
+    nearestUser: null
   }
 
   requestLocationPermission = async () => {
@@ -57,6 +58,14 @@ export default class HomeScreen extends Component {
     }
   }
 
+  handleUpdateLocation = response => {
+    console.log('handleUpdateLocation:', response)
+
+    if (response && response.nearestUser) {
+      this.setState({ nearestUser: response.nearestUser.nickName })
+    }
+  }
+
   async componentDidMount() {
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
@@ -66,13 +75,14 @@ export default class HomeScreen extends Component {
       position => {
         console.log(position)
         if (position.coords) {
-          if (isAgentFree) {
-            updateLocation({
+          updateLocation(
+            {
               speed: position.coords.speed,
               latitude: position.coords.latitude,
               longitude: position.coords.longitude
-            })
-          }
+            },
+            this.handleUpdateLocation
+          )
           this.setState({ speed: position.coords.speed })
           this.setState({ latitude: position.coords.latitude })
           this.setState({ longitude: position.coords.longitude })
@@ -111,7 +121,7 @@ export default class HomeScreen extends Component {
   }
 
   render() {
-    const { user, speed, latitude, longitude } = this.state
+    const { user, speed, latitude, longitude, nearestUser } = this.state
     return (
       <View style={styles.container}>
         {user && (
@@ -127,6 +137,11 @@ export default class HomeScreen extends Component {
           <Text>{latitude}</Text>
           <Text>{longitude}</Text>
         </View>
+        {nearestUser && (
+          <View>
+            <Text>{nearestUser}</Text>
+          </View>
+        )}
       </View>
     )
   }
@@ -135,6 +150,7 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: 30
+    marginTop: 40,
+    margin: 10
   }
 })
