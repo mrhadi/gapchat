@@ -14,9 +14,13 @@ import {
 } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import moment from 'moment'
+import BackgroundFetch from 'react-native-background-fetch'
+import Bugfender from '@bugfender/rn-bugfender'
 
 import { getUser } from '../../services/userAPIs'
 import { updateLocation } from '../../utils/locationAgent'
+
+Bugfender.d('REACT', 'getCurrentLocation')
 
 let watchID = null
 let UPDATE_LOCATION_TIMER = null
@@ -38,6 +42,44 @@ export default class HomeScreen extends Component {
     nearestUser: '',
     distance: 0,
     lastUpdate: ''
+  }
+
+  setupBackgroundFetch = () => {
+    BackgroundFetch.configure(
+      {
+        minimumFetchInterval: 15,
+        // Android options
+        stopOnTerminate: false,
+        startOnBoot: true,
+        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_NONE,
+        requiresCharging: false,
+        requiresDeviceIdle: false,
+        requiresBatteryNotLow: false,
+        requiresStorageNotLow: false
+      },
+      () => {
+        console.log('Received background-fetch event')
+        this.getCurrentLocation()
+        BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
+      },
+      error => {
+        console.log('RNBackgroundFetch failed to start:', error)
+      }
+    )
+
+    BackgroundFetch.status(status => {
+      switch (status) {
+        case BackgroundFetch.STATUS_RESTRICTED:
+          console.log('BackgroundFetch restricted')
+          break
+        case BackgroundFetch.STATUS_DENIED:
+          console.log('BackgroundFetch denied')
+          break
+        case BackgroundFetch.STATUS_AVAILABLE:
+          console.log('BackgroundFetch is enabled')
+          break
+      }
+    })
   }
 
   requestLocationPermission = async () => {
@@ -118,12 +160,16 @@ export default class HomeScreen extends Component {
   }
 
   async componentDidMount() {
+    Bugfender.init('NJk1tZ6XqvG7ROz7BCKYlpwIN9uZVnM4')
+    this.setupBackgroundFetch()
+
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
     }
 
     this.getCurrentLocation()
 
+    /*
     watchID = Geolocation.watchPosition(
       position => {
         console.log('watchPosition:', position)
@@ -136,6 +182,7 @@ export default class HomeScreen extends Component {
       },
       { distanceFilter: 1 }
     )
+    */
 
     getUser().then(response => {
       if (response.data) {
@@ -148,7 +195,7 @@ export default class HomeScreen extends Component {
 
     UPDATE_LOCATION_TIMER = setInterval(
       () => this.getCurrentLocation(),
-      1000 * 60
+      1000 * 60 * 5
     )
   }
 
