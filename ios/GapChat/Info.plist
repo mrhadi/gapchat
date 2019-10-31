@@ -39,6 +39,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Profile Picture</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>I need your location mate!</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>I need your location mate!</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -81,8 +83,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>I need your location mate!</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

@@ -17,13 +17,14 @@ const updateLocation = (location, callBack) => {
     .then(response => {
       agent.isBusy = false
       if (response && response.data) {
+        console.log('postLocation:', response.data)
         callBack(response.data)
       }
     })
     .catch(error => {
       agent.isBusy = false
       callBack(null)
-      console.log(error)
+      console.log('postLocation:', error)
     })
 }
 
