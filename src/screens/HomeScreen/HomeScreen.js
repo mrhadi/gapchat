@@ -15,12 +15,10 @@ import {
 import Geolocation from 'react-native-geolocation-service'
 import moment from 'moment'
 import BackgroundFetch from 'react-native-background-fetch'
-import Bugfender from '@bugfender/rn-bugfender'
 
 import { getUser } from '../../services/userAPIs'
 import { updateLocation } from '../../utils/locationAgent'
-
-Bugfender.d('REACT', 'getCurrentLocation')
+import { bugfenderLog } from '../../utils/bugfender'
 
 let watchID = null
 let UPDATE_LOCATION_TIMER = null
@@ -58,24 +56,32 @@ export default class HomeScreen extends Component {
         requiresStorageNotLow: false
       },
       () => {
+        bugfenderLog('Received background-fetch event', 'BackgroundFetch')
         console.log('Received background-fetch event')
         this.getCurrentLocation()
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
-        console.log('RNBackgroundFetch failed to start:', error)
+        bugfenderLog(
+          `BackgroundFetch failed to start: ${error}`,
+          'BackgroundFetch'
+        )
+        console.log('BackgroundFetch failed to start:', error)
       }
     )
 
     BackgroundFetch.status(status => {
       switch (status) {
         case BackgroundFetch.STATUS_RESTRICTED:
+          bugfenderLog('STATUS_RESTRICTED', 'BackgroundFetch')
           console.log('BackgroundFetch restricted')
           break
         case BackgroundFetch.STATUS_DENIED:
+          bugfenderLog('STATUS_DENIED', 'BackgroundFetch')
           console.log('BackgroundFetch denied')
           break
         case BackgroundFetch.STATUS_AVAILABLE:
+          bugfenderLog('STATUS_AVAILABLE', 'BackgroundFetch')
           console.log('BackgroundFetch is enabled')
           break
       }
@@ -145,6 +151,7 @@ export default class HomeScreen extends Component {
   }
 
   getCurrentLocation = () => {
+    bugfenderLog('', 'getCurrentLocation')
     Geolocation.getCurrentPosition(
       position => {
         console.log('getCurrentLocation:', position)
@@ -160,7 +167,6 @@ export default class HomeScreen extends Component {
   }
 
   async componentDidMount() {
-    Bugfender.init('NJk1tZ6XqvG7ROz7BCKYlpwIN9uZVnM4')
     this.setupBackgroundFetch()
 
     if (Platform.OS !== 'ios') {
@@ -195,7 +201,7 @@ export default class HomeScreen extends Component {
 
     UPDATE_LOCATION_TIMER = setInterval(
       () => this.getCurrentLocation(),
-      1000 * 60 * 5
+      1000 * 60
     )
   }
 
