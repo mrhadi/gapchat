@@ -18,7 +18,6 @@ import BackgroundFetch from 'react-native-background-fetch'
 
 import { getUser } from '../../services/userAPIs'
 import { updateLocation } from '../../utils/locationAgent'
-import { bugfenderLog } from '../../utils/bugfender'
 
 let watchID = null
 let UPDATE_LOCATION_TIMER = null
@@ -56,16 +55,18 @@ export default class HomeScreen extends Component {
         requiresStorageNotLow: false
       },
       () => {
-        bugfenderLog('Received background-fetch event', 'BackgroundFetch')
+        // bugfenderLog('Received background-fetch event', 'BackgroundFetch')
         console.log('Received background-fetch event')
         this.getCurrentLocation(false)
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
+        /*
         bugfenderLog(
           `BackgroundFetch failed to start: ${error}`,
           'BackgroundFetch'
         )
+        */
         console.log('BackgroundFetch failed to start:', error)
       }
     )
@@ -73,15 +74,15 @@ export default class HomeScreen extends Component {
     BackgroundFetch.status(status => {
       switch (status) {
         case BackgroundFetch.STATUS_RESTRICTED:
-          bugfenderLog('STATUS_RESTRICTED', 'BackgroundFetch')
+          // bugfenderLog('STATUS_RESTRICTED', 'BackgroundFetch')
           console.log('BackgroundFetch restricted')
           break
         case BackgroundFetch.STATUS_DENIED:
-          bugfenderLog('STATUS_DENIED', 'BackgroundFetch')
+          // bugfenderLog('STATUS_DENIED', 'BackgroundFetch')
           console.log('BackgroundFetch denied')
           break
         case BackgroundFetch.STATUS_AVAILABLE:
-          bugfenderLog('STATUS_AVAILABLE', 'BackgroundFetch')
+          // bugfenderLog('STATUS_AVAILABLE', 'BackgroundFetch')
           console.log('BackgroundFetch is enabled')
           break
       }
@@ -151,7 +152,7 @@ export default class HomeScreen extends Component {
   }
 
   getCurrentLocation = (handleResponse = true) => {
-    bugfenderLog(`handleResponse: ${handleResponse}`, 'getCurrentLocation')
+    // bugfenderLog(`handleResponse: ${handleResponse}`, 'getCurrentLocation')
     Geolocation.getCurrentPosition(
       position => {
         console.log('getCurrentLocation:', position)

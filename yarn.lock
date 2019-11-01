@@ -647,11 +647,6 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@bugfender/rn-bugfender@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@bugfender/rn-bugfender/-/rn-bugfender-1.1.0.tgz#d1691f534641f0d08e8aca9cd53e6fcde07160e3"
-  integrity sha512-KZ56zeMSMitw6D9RYtnEmScj8bGg9pbq9iTgiltv8RKpUK0ump1K3jO98KMivNOTIvAZUs1n8xhRyVWRH0+v+Q==
-
 "@cnakazawa/watch@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.3.tgz#099139eaec7ebf07a27c1786a3ff64f39464d2ef"

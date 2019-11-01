@@ -3,7 +3,6 @@ package com.gapchat;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.bugfender.react.RNBugfenderPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.reactnativecommunity.slider.ReactSliderPackage;
@@ -32,7 +31,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNBugfenderPackage(),
             new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),
           new ReactSliderPackage(),

@@ -138,7 +138,6 @@ android {
 }
 
 dependencies {
-    implementation project(':@bugfender_rn-bugfender')
     implementation project(':react-native-background-fetch')
     implementation project(':react-native-device-info')
     implementation project(':@react-native-community_slider')
