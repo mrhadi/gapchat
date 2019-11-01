@@ -49,7 +49,7 @@ export default class HomeScreen extends Component {
         // Android options
         stopOnTerminate: false,
         startOnBoot: true,
-        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_NONE,
+        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
         requiresCharging: false,
         requiresDeviceIdle: false,
         requiresBatteryNotLow: false,
@@ -58,7 +58,7 @@ export default class HomeScreen extends Component {
       () => {
         bugfenderLog('Received background-fetch event', 'BackgroundFetch')
         console.log('Received background-fetch event')
-        this.getCurrentLocation()
+        this.getCurrentLocation(false)
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
@@ -135,7 +135,7 @@ export default class HomeScreen extends Component {
     })
   }
 
-  handleUpdateLocation = coords => {
+  handleUpdateLocation = (coords, handleResponse = true) => {
     console.log('handleUpdateLocation:', coords)
     updateLocation(
       {
@@ -143,20 +143,20 @@ export default class HomeScreen extends Component {
         latitude: coords.latitude,
         longitude: coords.longitude
       },
-      this.handleUpdateLocationResponse
+      handleResponse ? this.handleUpdateLocationResponse : null
     )
     this.setState({ speed: coords.speed })
     this.setState({ latitude: coords.latitude })
     this.setState({ longitude: coords.longitude })
   }
 
-  getCurrentLocation = () => {
-    bugfenderLog('', 'getCurrentLocation')
+  getCurrentLocation = (handleResponse = true) => {
+    bugfenderLog(`handleResponse: ${handleResponse}`, 'getCurrentLocation')
     Geolocation.getCurrentPosition(
       position => {
         console.log('getCurrentLocation:', position)
         if (position.coords) {
-          this.handleUpdateLocation(position.coords)
+          this.handleUpdateLocation(position.coords, handleResponse)
         }
       },
       error => {
@@ -172,8 +172,6 @@ export default class HomeScreen extends Component {
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
     }
-
-    this.getCurrentLocation()
 
     /*
     watchID = Geolocation.watchPosition(
@@ -199,9 +197,11 @@ export default class HomeScreen extends Component {
       }
     })
 
+    this.getCurrentLocation()
+
     UPDATE_LOCATION_TIMER = setInterval(
       () => this.getCurrentLocation(),
-      1000 * 60
+      1000 * 30
     )
   }
 
