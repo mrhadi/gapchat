@@ -1,4 +1,5 @@
 import { postLocation } from '../services/locationAPIs'
+import { bugsnagError } from '../utils/bugsnag'
 
 const agent = { isBusy: false }
 
@@ -25,6 +26,7 @@ const updateLocation = (location, callBack) => {
     })
     .catch(error => {
       // agent.isBusy = false
+      bugsnagError(error)
       callBack(null)
       console.log('postLocation:', error)
     })

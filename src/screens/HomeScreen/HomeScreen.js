@@ -14,12 +14,11 @@ import {
 } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import moment from 'moment'
-import BackgroundFetch from 'react-native-background-fetch'
+import { bugsnagError } from '../../utils/bugsnag'
 
 import { getUser } from '../../services/userAPIs'
 import { updateLocation } from '../../utils/locationAgent'
 
-let watchID = null
 let UPDATE_LOCATION_TIMER = null
 
 export default class HomeScreen extends Component {
@@ -38,55 +37,8 @@ export default class HomeScreen extends Component {
     longitude: 0,
     nearestUser: '',
     distance: 0,
-    lastUpdate: ''
-  }
-
-  setupBackgroundFetch = () => {
-    BackgroundFetch.configure(
-      {
-        minimumFetchInterval: 15,
-        // Android options
-        stopOnTerminate: false,
-        startOnBoot: true,
-        requiredNetworkType: BackgroundFetch.NETWORK_TYPE_ANY,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-        requiresBatteryNotLow: false,
-        requiresStorageNotLow: false
-      },
-      () => {
-        // bugfenderLog('Received background-fetch event', 'BackgroundFetch')
-        console.log('Received background-fetch event')
-        this.getCurrentLocation(false)
-        BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
-      },
-      error => {
-        /*
-        bugfenderLog(
-          `BackgroundFetch failed to start: ${error}`,
-          'BackgroundFetch'
-        )
-        */
-        console.log('BackgroundFetch failed to start:', error)
-      }
-    )
-
-    BackgroundFetch.status(status => {
-      switch (status) {
-        case BackgroundFetch.STATUS_RESTRICTED:
-          // bugfenderLog('STATUS_RESTRICTED', 'BackgroundFetch')
-          console.log('BackgroundFetch restricted')
-          break
-        case BackgroundFetch.STATUS_DENIED:
-          // bugfenderLog('STATUS_DENIED', 'BackgroundFetch')
-          console.log('BackgroundFetch denied')
-          break
-        case BackgroundFetch.STATUS_AVAILABLE:
-          // bugfenderLog('STATUS_AVAILABLE', 'BackgroundFetch')
-          console.log('BackgroundFetch is enabled')
-          break
-      }
-    })
+    lastUpdate: '',
+    lastSeen: ''
   }
 
   requestLocationPermission = async () => {
@@ -118,10 +70,19 @@ export default class HomeScreen extends Component {
     let nearestUser = ''
     let distance = 0
     let lastUpdate = ''
+    let lastSeen = ''
 
     if (response && response.nearestUser) {
       nearestUser = response.nearestUser.nickName
+      lastSeen = moment(response.nearestUser.updatedAt).format(
+        'YYYY-MM-DD h:mm:ss a'
+      )
       distance = response.distance
+    }
+    if (response && response.nearest) {
+      lastSeen = moment(response.nearest.updatedAt).format(
+        'YYYY-MM-DD h:mm:ss a'
+      )
     }
     if (response && response.userLocation) {
       lastUpdate = moment(response.userLocation.updatedAt).format(
@@ -132,7 +93,8 @@ export default class HomeScreen extends Component {
     this.setState({
       nearestUser,
       distance,
-      lastUpdate
+      lastUpdate,
+      lastSeen
     })
   }
 
@@ -152,7 +114,6 @@ export default class HomeScreen extends Component {
   }
 
   getCurrentLocation = (handleResponse = true) => {
-    // bugfenderLog(`handleResponse: ${handleResponse}`, 'getCurrentLocation')
     Geolocation.getCurrentPosition(
       position => {
         console.log('getCurrentLocation:', position)
@@ -161,33 +122,16 @@ export default class HomeScreen extends Component {
         }
       },
       error => {
+        bugsnagError(error)
         console.log('getCurrentLocation:', error)
-      },
-      { timeout: 5000, maximumAge: 1000 * 60 * 5, distanceFilter: 1 }
+      }
     )
   }
 
   async componentDidMount() {
-    this.setupBackgroundFetch()
-
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
     }
-
-    /*
-    watchID = Geolocation.watchPosition(
-      position => {
-        console.log('watchPosition:', position)
-        if (position.coords) {
-          this.handleUpdateLocation(position.coords)
-        }
-      },
-      error => {
-        console.log('watchPosition:', error)
-      },
-      { distanceFilter: 1 }
-    )
-    */
 
     getUser().then(response => {
       if (response.data) {
@@ -208,7 +152,6 @@ export default class HomeScreen extends Component {
 
   componentWillUnmount() {
     clearTimeout(UPDATE_LOCATION_TIMER)
-    watchID != null && Geolocation.clearWatch(watchID)
   }
 
   render() {
@@ -219,7 +162,8 @@ export default class HomeScreen extends Component {
       longitude,
       nearestUser,
       distance,
-      lastUpdate
+      lastUpdate,
+      lastSeen
     } = this.state
     return (
       <View style={styles.container}>
@@ -240,6 +184,7 @@ export default class HomeScreen extends Component {
         <View>
           <Text>{'Nearby: ' + nearestUser}</Text>
           <Text>{'Distance: ' + distance}</Text>
+          <Text>{'Last seen: ' + lastSeen}</Text>
         </View>
       </View>
     )
