@@ -5,10 +5,18 @@ import { bugsnagError } from '../utils/bugsnag'
 
 const instance = axios.create({
   baseURL: API,
-  timeout: 3000
+  timeout: 5000
 })
 
 instance.defaults.headers.common['device-id'] = deviceUniqueID
+
+instance.interceptors.request.use(
+  config => {
+    console.log('config:', config)
+    return config
+  },
+  error => error
+)
 
 instance.interceptors.response.use(
   response => response,

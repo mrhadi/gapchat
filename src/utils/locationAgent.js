@@ -15,7 +15,8 @@ const updateLocation = (location, callBack) => {
   postLocation({
     speed: location.speed,
     latitude: location.latitude,
-    longitude: location.longitude
+    longitude: location.longitude,
+    metaData: location.metaData
   })
     .then(response => {
       // agent.isBusy = false
@@ -27,7 +28,6 @@ const updateLocation = (location, callBack) => {
     .catch(error => {
       // agent.isBusy = false
       bugsnagError(error)
-      callBack(null)
       console.log('postLocation:', error)
     })
 }
