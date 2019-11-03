@@ -105,7 +105,7 @@ export default class HomeScreen extends Component {
         speed: coords.speed,
         latitude: coords.latitude,
         longitude: coords.longitude,
-        metaData: { source: 'Interval' }
+        metaData: { requestedBy: 'Interval' }
       },
       handleResponse ? this.handleUpdateLocationResponse : null
     )

@@ -68,14 +68,14 @@ class Init extends React.PureComponent {
     })
   }
 
-  handleUpdateLocation = (coords, source) => {
-    console.log('handleUpdateLocation:', coords, source)
+  handleUpdateLocation = (coords, requestedBy) => {
+    console.log('handleUpdateLocation:', coords, requestedBy)
     updateLocation(
       {
         speed: coords.speed,
         latitude: coords.latitude,
         longitude: coords.longitude,
-        metaData: { source }
+        metaData: { requestedBy }
       },
       null
     )
@@ -89,7 +89,7 @@ class Init extends React.PureComponent {
         bugsnagLog('watchPosition')
         console.log('watchPosition:', position)
         if (position.coords) {
-          this.handleUpdateLocation(position.coords, 'watchID')
+          this.handleUpdateLocation(position.coords, 'WatchPosition')
         }
       },
       error => {
