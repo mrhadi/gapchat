@@ -23,11 +23,11 @@ class Init extends React.PureComponent {
     userLocation: null
   }
 
-  getCurrentLocation = () => {
+  getCurrentLocation = requestedBy => {
     Geolocation.getCurrentPosition(
       position => {
         if (position.coords) {
-          this.handleUpdateLocation(position.coords, 'BackgroundFetch')
+          this.handleUpdateLocation(position.coords, requestedBy)
         }
       },
       error => {
@@ -52,7 +52,7 @@ class Init extends React.PureComponent {
       },
       () => {
         console.log('Received background-fetch event')
-        this.getCurrentLocation()
+        this.getCurrentLocation('BackgroundFetch')
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
@@ -112,7 +112,7 @@ class Init extends React.PureComponent {
     )
 
     UPDATE_LOCATION_TIMER = setInterval(
-      () => this.getCurrentLocation(),
+      () => this.getCurrentLocation('Interval'),
       1000 * 30
     )
 
