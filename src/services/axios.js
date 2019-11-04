@@ -10,13 +10,7 @@ const instance = axios.create({
 
 instance.defaults.headers.common['device-id'] = deviceUniqueID
 
-instance.interceptors.request.use(
-  config => {
-    console.log('config:', config)
-    return config
-  },
-  error => error
-)
+instance.interceptors.request.use(config => config, error => error)
 
 instance.interceptors.response.use(
   response => response,

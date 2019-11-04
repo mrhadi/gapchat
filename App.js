@@ -6,18 +6,23 @@
 import React, { PureComponent } from 'react'
 import { setCustomText } from 'react-native-global-props'
 import { View } from 'react-native'
+import { Provider } from 'react-redux'
+
 import AppContainer from './src/navigation'
 import Init from './src/components/Init/Init'
+import store from './src/services/store/store'
 
 setCustomText({ style: { fontFamily: 'Poppins' } })
 
 export default class App extends PureComponent {
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <Provider store={store}>
         <Init />
-        <AppContainer />
-      </View>
+        <View style={{ flex: 1 }}>
+          <AppContainer />
+        </View>
+      </Provider>
     )
   }
 }

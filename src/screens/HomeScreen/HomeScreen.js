@@ -12,33 +12,26 @@ import {
   Platform,
   PermissionsAndroid
 } from 'react-native'
-import Geolocation from 'react-native-geolocation-service'
-import moment from 'moment'
-import { bugsnagError } from '../../utils/bugsnag'
-
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { getUser } from '../../services/userAPIs'
-import { updateLocation } from '../../utils/locationAgent'
 
-let UPDATE_LOCATION_TIMER = null
-
-export default class HomeScreen extends Component {
+export class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Home'
   }
 
   static propTypes = {
-    navigation: PropTypes.object.isRequired
+    navigation: PropTypes.object.isRequired,
+    userLocation: PropTypes.object
+  }
+
+  static defaultProps = {
+    userLocation: null
   }
 
   state = {
-    user: null,
-    speed: 0,
-    latitude: 0,
-    longitude: 0,
-    nearestUser: '',
-    distance: 0,
-    lastUpdate: '',
-    lastSeen: ''
+    user: null
   }
 
   requestLocationPermission = async () => {
@@ -54,86 +47,16 @@ export default class HomeScreen extends Component {
         }
       )
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera')
+        console.log('You can use the location')
       } else {
-        console.log('Camera permission denied')
+        console.log('Location permission denied')
       }
     } catch (err) {
-      console.warn(err)
+      console.log(err)
     }
-  }
-
-  handleUpdateLocationResponse = response => {
-    console.log('handleUpdateLocationResponse:', response)
-    if (!response) return
-
-    let nearestUser = ''
-    let distance = 0
-    let lastUpdate = ''
-    let lastSeen = ''
-
-    if (response && response.nearestUser) {
-      nearestUser = response.nearestUser.nickName
-      lastSeen = moment(response.nearestUser.updatedAt).format(
-        'YYYY-MM-DD h:mm:ss a'
-      )
-      distance = response.distance
-    }
-    if (response && response.nearest) {
-      lastSeen = moment(response.nearest.updatedAt).format(
-        'YYYY-MM-DD h:mm:ss a'
-      )
-    }
-    if (response && response.userLocation) {
-      lastUpdate = moment(response.userLocation.updatedAt).format(
-        'YYYY-MM-DD h:mm:ss a'
-      )
-    }
-
-    this.setState({
-      nearestUser,
-      distance,
-      lastUpdate,
-      lastSeen
-    })
-  }
-
-  handleUpdateLocation = (coords, handleResponse = true) => {
-    console.log('handleUpdateLocation:', coords)
-    updateLocation(
-      {
-        speed: coords.speed,
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-        metaData: { requestedBy: 'Interval' }
-      },
-      handleResponse ? this.handleUpdateLocationResponse : null
-    )
-    this.setState({ speed: coords.speed })
-    this.setState({ latitude: coords.latitude })
-    this.setState({ longitude: coords.longitude })
-  }
-
-  getCurrentLocation = (handleResponse = true) => {
-    Geolocation.getCurrentPosition(
-      position => {
-        console.log('getCurrentLocation:', position)
-        if (position.coords) {
-          this.handleUpdateLocation(position.coords, handleResponse)
-        }
-      },
-      error => {
-        bugsnagError(error)
-        console.log('getCurrentLocation:', error)
-      }
-    )
   }
 
   async componentDidMount() {
-    if (Platform.OS !== 'ios') {
-      await this.requestLocationPermission()
-    }
-
     getUser().then(response => {
       if (response.data) {
         this.setState({ user: response.data })
@@ -143,29 +66,15 @@ export default class HomeScreen extends Component {
       }
     })
 
-    this.getCurrentLocation()
-
-    UPDATE_LOCATION_TIMER = setInterval(
-      () => this.getCurrentLocation(),
-      1000 * 30
-    )
-  }
-
-  componentWillUnmount() {
-    clearTimeout(UPDATE_LOCATION_TIMER)
+    if (Platform.OS !== 'ios') {
+      await this.requestLocationPermission()
+    }
   }
 
   render() {
-    const {
-      user,
-      speed,
-      latitude,
-      longitude,
-      nearestUser,
-      distance,
-      lastUpdate,
-      lastSeen
-    } = this.state
+    const { user } = this.state
+    const { userLocation } = this.props
+    console.log('userLocation:', userLocation.data)
     return (
       <View style={styles.container}>
         {user && (
@@ -177,20 +86,25 @@ export default class HomeScreen extends Component {
           </View>
         )}
         <View>
-          <Text>{'Speed: ' + speed}</Text>
-          <Text>{'Lat: ' + latitude}</Text>
-          <Text>{'Lng: ' + longitude}</Text>
-          <Text>{'When: ' + lastUpdate}</Text>
-        </View>
-        <View>
-          <Text>{'Nearby: ' + nearestUser}</Text>
-          <Text>{'Distance: ' + distance}</Text>
-          <Text>{'Last seen: ' + lastSeen}</Text>
+          <Text>{'Nearby: '}</Text>
+          <Text>{'Distance: '}</Text>
+          <Text>{'Last seen: '}</Text>
         </View>
       </View>
     )
   }
 }
+
+export const mapStateToProps = ({ userLocation }) => ({
+  userLocation
+})
+
+export const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeScreen)
 
 const styles = StyleSheet.create({
   container: {
