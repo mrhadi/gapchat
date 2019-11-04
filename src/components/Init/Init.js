@@ -26,7 +26,6 @@ class Init extends React.PureComponent {
   getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        console.log('getCurrentLocation')
         if (position.coords) {
           this.handleUpdateLocation(position.coords, 'BackgroundFetch')
         }
@@ -90,7 +89,7 @@ class Init extends React.PureComponent {
       longitude: coords.longitude,
       metaData: { requestedBy }
     }
-    console.log('handleUpdateLocation')
+    console.log('handleUpdateLocation:', requestedBy)
 
     const { updateUserLocation: dispatchUpdateUserLocation } = this.props
     dispatchUpdateUserLocation(locationData)
@@ -101,7 +100,6 @@ class Init extends React.PureComponent {
 
     watchID = Geolocation.watchPosition(
       position => {
-        console.log('watchPosition')
         if (position.coords) {
           this.handleUpdateLocation(position.coords, 'WatchPosition')
         }
