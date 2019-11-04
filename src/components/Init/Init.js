@@ -3,14 +3,13 @@ import { AppState } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import BackgroundFetch from 'react-native-background-fetch'
 
-import { bugsnagLog, bugsnagError } from '../../utils/bugsnag'
+import { bugsnagError } from '../../utils/bugsnag'
 import { updateLocation } from '../../utils/locationAgent'
 
 let watchID = null
 
 class Init extends React.PureComponent {
   getCurrentLocation = () => {
-    bugsnagLog('getCurrentLocation', 'AppInit')
     Geolocation.getCurrentPosition(
       position => {
         console.log('getCurrentLocation:', position)
@@ -39,7 +38,6 @@ class Init extends React.PureComponent {
         requiresStorageNotLow: false
       },
       () => {
-        bugsnagLog('BackgroundFetch', 'Received BackgroundFetch event')
         console.log('Received background-fetch event')
         this.getCurrentLocation(false)
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
@@ -53,15 +51,12 @@ class Init extends React.PureComponent {
     BackgroundFetch.status(status => {
       switch (status) {
         case BackgroundFetch.STATUS_RESTRICTED:
-          bugsnagLog('BackgroundFetch', 'STATUS_RESTRICTED')
           console.log('BackgroundFetch restricted')
           break
         case BackgroundFetch.STATUS_DENIED:
-          bugsnagLog('BackgroundFetch', 'STATUS_DENIED')
           console.log('BackgroundFetch denied')
           break
         case BackgroundFetch.STATUS_AVAILABLE:
-          bugsnagLog('BackgroundFetch', 'STATUS_AVAILABLE')
           console.log('BackgroundFetch is enabled')
           break
       }
@@ -86,7 +81,6 @@ class Init extends React.PureComponent {
 
     watchID = Geolocation.watchPosition(
       position => {
-        bugsnagLog('watchPosition')
         console.log('watchPosition:', position)
         if (position.coords) {
           this.handleUpdateLocation(position.coords, 'WatchPosition')
@@ -108,7 +102,6 @@ class Init extends React.PureComponent {
   }
 
   handleAppStateChange = nextAppState => {
-    bugsnagLog('AppState', nextAppState)
     console.log('AppState:', nextAppState)
   }
 
