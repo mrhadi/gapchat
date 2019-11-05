@@ -15,6 +15,14 @@ export default api => {
           yield put(actions.getUserFail())
         }
         break
+      case actions.ADD_USER:
+        response = yield call(api.addUser, action.payload)
+        if (isOkay(response)) {
+          yield put(actions.addUserSuccess(response.data))
+        } else {
+          yield put(actions.addUserFail())
+        }
+        break
       default:
         break
     }
@@ -22,6 +30,7 @@ export default api => {
 
   function* watcher() {
     yield takeEvery([actions.GET_USER], worker)
+    yield takeEvery([actions.ADD_USER], worker)
   }
 
   return { worker, watcher }

@@ -18,7 +18,9 @@ import {
 import LinearGradient from 'react-native-linear-gradient'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { addUser } from '../../services/userAPIs'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { addUser } from '../../services/user/actions'
 
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
@@ -33,13 +35,15 @@ import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
 const { height } = Dimensions.get('window')
 
-export default class ProfileScreen extends Component {
+class ProfileScreen extends Component {
   static navigationOptions = {
     headerLeft: null
   }
 
   static propTypes = {
-    navigation: PropTypes.object.isRequired
+    navigation: PropTypes.object.isRequired,
+    user: PropTypes.object,
+    addUser: PropTypes.func.isRequired
   }
 
   state = {
@@ -90,19 +94,15 @@ export default class ProfileScreen extends Component {
 
     this.setState({ showLoading: true })
 
-    addUser({
+    const userData = {
       nickName: userNickname,
       avatar: userAvatar,
       nearest: userNearestDistance,
       furthest: userFurthestDistance
-    }).then(response => {
-      this.setState({ showLoading: false })
+    }
 
-      if (response && response.data) {
-        const { navigation } = this.props
-        navigation.navigate('Home')
-      }
-    })
+    const { addUser: dispatchAddUser } = this.props
+    dispatchAddUser(userData)
   }
 
   handleSettingsChanged = settings => {
@@ -124,6 +124,19 @@ export default class ProfileScreen extends Component {
     </View>
   )
 
+  componentDidUpdate() {
+    console.log('componentDidUpdate: Profile')
+    const { user, navigation } = this.props
+
+    if (user.userVerified) {
+      navigation.replace('Home')
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount: Profile')
+  }
+
   render() {
     const {
       modalVisible,
@@ -140,6 +153,8 @@ export default class ProfileScreen extends Component {
       userNearestDistance: userNearestDistance,
       userFurthestDistance: userFurthestDistance
     }
+    const { user } = this.props
+    console.log('User:', user)
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
@@ -195,6 +210,18 @@ export default class ProfileScreen extends Component {
     )
   }
 }
+
+export const mapStateToProps = ({ user }) => ({
+  user
+})
+
+export const mapDispatchToProps = dispatch =>
+  bindActionCreators({ addUser }, dispatch)
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProfileScreen)
 
 const styles = StyleSheet.create({
   bgImage: {

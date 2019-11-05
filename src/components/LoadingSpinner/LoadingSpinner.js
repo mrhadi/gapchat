@@ -1,30 +1,26 @@
 import React from 'react'
-import { StyleSheet, View, Modal, ActivityIndicator } from 'react-native'
+import { StyleSheet, View, ActivityIndicator } from 'react-native'
 import Colors from '../../styles/colors'
 
 const LoadingSpinner = () => {
   return (
-    <View style={styles.modalContainer}>
+    <View style={styles.container}>
       <ActivityIndicator size="large" color={Colors.bgWhite} />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     backgroundColor: 'rgba(83,85,114,0.75)',
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0
   }
 })
 
 export default LoadingSpinner
-
-/*
-<Modal animationType="fade" transparent onRequestClose={() => {}}>
-  <View style={styles.modalContainer}>
-    <ActivityIndicator size="large" color={Colors.bgWhite} />
-  </View>
-</Modal>
-*/

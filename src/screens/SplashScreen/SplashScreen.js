@@ -6,6 +6,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Platform, PermissionsAndroid } from 'react-native'
+
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -54,18 +55,24 @@ export class SplashScreen extends Component {
   }
 
   async componentDidMount() {
+    this.props.navigation.setParams({ screen: 'Splash' })
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
     }
   }
 
+  componentWillUnmount() {
+    console.log('componentWillUnmount: Splash')
+  }
+
   componentDidUpdate() {
+    console.log('componentDidUpdate: Splash')
     const { user, navigation } = this.props
 
     if (user.userVerified) {
-      navigation.navigate('Home')
+      navigation.replace('Home')
     } else if (user.userVerified === false) {
-      navigation.navigate('Onboarding')
+      navigation.replace('Onboarding')
     }
   }
 

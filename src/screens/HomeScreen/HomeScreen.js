@@ -58,17 +58,7 @@ export class HomeScreen extends Component {
   }
 
   async componentDidMount() {
-    /*
-    getUser().then(response => {
-      if (response.data) {
-        this.setState({ user: response.data })
-      } else {
-        const { navigation } = this.props
-        navigation.navigate('Onboarding')
-      }
-    })
-    */
-
+    this.props.navigation.setParams({ screen: 'Home' })
     if (Platform.OS !== 'ios') {
       await this.requestLocationPermission()
     }
