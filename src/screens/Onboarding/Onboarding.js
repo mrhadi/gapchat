@@ -29,13 +29,13 @@ import Colors from '../../styles/colors'
 const onboardingContents = [
   {
     image: intro,
-    title: "Far or near, let's chat!",
+    title: "Far or Near, let's Chat!",
     description:
       'One to one chat. There is no registration, no chat history, no personal details, no groups, just pick a nick name and set the profile photo or avatar and you are ready to go.'
   },
   {
     image: location,
-    title: 'Enable your location',
+    title: 'Enable your Location',
     description:
       'Any time you open the app, there is only two other users to chat with, only two! One of these two is the nearest to you and the other one is the furthest to you.'
   },

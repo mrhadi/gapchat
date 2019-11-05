@@ -79,7 +79,7 @@ export default class Settings extends PureComponent {
           <Text style={styles.km}>{userNearestDistance} m</Text>
         </View>
         <Text style={styles.featureDescription}>
-          Choose the nearest distance you want us fo find your potential
+          Choose the nearest distance you want us to find your potential
           friends.
         </Text>
         <Slider
@@ -88,7 +88,7 @@ export default class Settings extends PureComponent {
           step={10}
           onValueChange={value => this.handleNearestChanged(value)}
           value={userNearestDistance}
-          maximumValue={1000}
+          maximumValue={10000}
           minimumTrackTintColor={Colors.errorRed}
           maximumTrackTintColor={Colors.sliderGrey}
           thumbTintColor={Colors.sliderViolet}
@@ -99,7 +99,7 @@ export default class Settings extends PureComponent {
           <Text style={styles.km}>{userFurthestDistance} km</Text>
         </View>
         <Text style={styles.featureDescription}>
-          Choose the furthest distance you want us fo find your potential
+          Choose the furthest distance you want us to find your potential
           friends.
         </Text>
         <Slider
