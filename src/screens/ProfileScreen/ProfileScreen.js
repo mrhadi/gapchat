@@ -53,7 +53,7 @@ class ProfileScreen extends Component {
     userAvatar: '',
     userNickname: '',
     userActive: true,
-    userNearestDistance: 10,
+    userNearestDistance: 20,
     userFurthestDistance: 20000
   }
 

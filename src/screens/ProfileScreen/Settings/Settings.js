@@ -15,7 +15,7 @@ export default class Settings extends PureComponent {
 
   state = {
     userActive: true,
-    userNearestDistance: 10,
+    userNearestDistance: 20,
     userFurthestDistance: 20000
   }
 
@@ -84,8 +84,8 @@ export default class Settings extends PureComponent {
         </Text>
         <Slider
           style={styles.slider}
-          minimumValue={10}
-          step={10}
+          minimumValue={20}
+          step={20}
           onValueChange={value => this.handleNearestChanged(value)}
           value={userNearestDistance}
           maximumValue={10000}
@@ -104,8 +104,8 @@ export default class Settings extends PureComponent {
         </Text>
         <Slider
           style={styles.slider}
-          minimumValue={10}
-          step={10}
+          minimumValue={20}
+          step={50}
           onValueChange={value => this.handleFurthestChanged(value)}
           value={userFurthestDistance}
           maximumValue={Math.round(EARTH_CIRCUMFERENCE / 2)}
