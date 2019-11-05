@@ -7,9 +7,12 @@ import React from 'react'
 import { Platform } from 'react-native'
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import LinearGradient from 'react-native-linear-gradient'
+
 import OnboardingScreen from './screens/Onboarding/Onboarding'
 import HomeScreen from './screens/HomeScreen/HomeScreen'
 import ProfileScreen from './screens/ProfileScreen/ProfileScreen'
+import SplashScreen from './screens/SplashScreen/SplashScreen'
+
 import Colors from './styles/colors'
 import IcoMoon from '../icomoon/IcoMoon'
 import { fontScale, scaleX, scaleY } from './utils/scaleUtils'
@@ -25,6 +28,13 @@ const AppNavigator = createStackNavigator(
     },
     Home: {
       screen: HomeScreen,
+      navigationOptions: () => ({
+        header: null,
+        title: null
+      })
+    },
+    Splash: {
+      screen: SplashScreen,
       navigationOptions: () => ({
         header: null,
         title: null
@@ -62,7 +72,7 @@ const AppNavigator = createStackNavigator(
     }
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Splash',
     headerLayoutPreset: 'center'
   }
 )

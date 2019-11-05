@@ -8,7 +8,9 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
 import { bugsnagError } from '../../utils/bugsnag'
+
 import { updateUserLocation } from '../../services/userLocation/actions'
+import { getUser } from '../../services/user/actions'
 
 let watchID = null
 let UPDATE_LOCATION_TIMER = null
@@ -16,11 +18,14 @@ let UPDATE_LOCATION_TIMER = null
 class Init extends React.PureComponent {
   static propTypes = {
     userLocation: PropTypes.object,
-    updateUserLocation: PropTypes.func.isRequired
+    user: PropTypes.object,
+    updateUserLocation: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired
   }
 
   static defaultProps = {
-    userLocation: null
+    userLocation: null,
+    user: null
   }
 
   getCurrentLocation = requestedBy => {
@@ -77,7 +82,12 @@ class Init extends React.PureComponent {
   }
 
   handleUpdateLocation = (coords, requestedBy) => {
-    const { userLocation } = this.props
+    const { userLocation, user } = this.props
+
+    if (user === null || user.data === null) {
+      console.log('handleUpdateLocation: no user')
+      return
+    }
     if (userLocation.fetchingData) {
       console.log('handleUpdateLocation: fetching data')
       return
@@ -97,6 +107,9 @@ class Init extends React.PureComponent {
 
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange)
+
+    const { getUser: dispatchGetUser } = this.props
+    dispatchGetUser()
 
     watchID = Geolocation.watchPosition(
       position => {
@@ -134,12 +147,13 @@ class Init extends React.PureComponent {
   }
 }
 
-export const mapStateToProps = ({ userLocation }) => ({
-  userLocation
+export const mapStateToProps = ({ userLocation, user }) => ({
+  userLocation,
+  user
 })
 
 export const mapDispatchToProps = dispatch =>
-  bindActionCreators({ updateUserLocation }, dispatch)
+  bindActionCreators({ updateUserLocation, getUser }, dispatch)
 
 export default connect(
   mapStateToProps,

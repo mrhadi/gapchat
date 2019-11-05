@@ -4,11 +4,9 @@ import Colors from '../../styles/colors'
 
 const LoadingSpinner = () => {
   return (
-    <Modal animationType="fade" transparent onRequestClose={() => {}}>
-      <View style={styles.modalContainer}>
-        <ActivityIndicator size="large" color={Colors.bgWhite} />
-      </View>
-    </Modal>
+    <View style={styles.modalContainer}>
+      <ActivityIndicator size="large" color={Colors.bgWhite} />
+    </View>
   )
 }
 
@@ -22,3 +20,11 @@ const styles = StyleSheet.create({
 })
 
 export default LoadingSpinner
+
+/*
+<Modal animationType="fade" transparent onRequestClose={() => {}}>
+  <View style={styles.modalContainer}>
+    <ActivityIndicator size="large" color={Colors.bgWhite} />
+  </View>
+</Modal>
+*/
