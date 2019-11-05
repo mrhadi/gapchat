@@ -6,14 +6,19 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {
+  ImageBackground,
   StyleSheet,
-  Text,
   View,
   Platform,
   PermissionsAndroid
 } from 'react-native'
+import { SafeAreaView } from 'react-navigation'
+
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import bg from '../../assets/images/profile/bg.png'
 
 export class HomeScreen extends Component {
   static navigationOptions = {
@@ -65,12 +70,13 @@ export class HomeScreen extends Component {
   }
 
   render() {
-    const { userLocation, user } = this.props
-    const userData = user && user.data ? user.data : null
-
-    console.log('User:', userData)
-
-    return <View style={styles.container} />
+    const { userLocation } = this.props
+    return (
+      <ImageBackground style={styles.bgImage} source={bg}>
+        <SafeAreaView />
+        {userLocation.data == null && <LoadingSpinner />}
+      </ImageBackground>
+    )
   }
 }
 
@@ -91,5 +97,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 40,
     margin: 10
+  },
+  bgImage: {
+    width: '100%',
+    height: '100%'
   }
 })

@@ -132,6 +132,16 @@ class Init extends React.PureComponent {
     this.setupBackgroundFetch()
   }
 
+  componentDidUpdate(prevProps) {
+    const { user, userLocation } = this.props
+    console.log('Init:', { user: user.data, userLocation: userLocation.data })
+
+    if (!prevProps.user.userVerified && user.userVerified) {
+      console.log('User is ready, get the location now ...')
+      this.getCurrentLocation('Interval')
+    }
+  }
+
   componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange)
     watchID != null && Geolocation.clearWatch(watchID)
