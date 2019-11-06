@@ -24,6 +24,7 @@
     "bugsnag-react-native": "^2.23.2",
     "eslint-plugin-jest": "^22.7.0",
     "moment": "^2.24.0",
+    "numeral": "^2.0.6",
     "prop-types": "^15.7.2",
     "react": "16.8.3",
     "react-native": "0.59.8",

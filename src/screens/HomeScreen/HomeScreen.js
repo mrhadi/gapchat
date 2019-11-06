@@ -10,12 +10,14 @@ import {
   StyleSheet,
   View,
   Platform,
+  Text,
   PermissionsAndroid
 } from 'react-native'
 import { SafeAreaView } from 'react-navigation'
+import { bindActionCreators } from 'redux'
 
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import numeral from 'numeral'
 
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import bg from '../../assets/images/profile/bg.png'
@@ -71,9 +73,44 @@ export class HomeScreen extends Component {
 
   render() {
     const { userLocation } = this.props
+
+    let fromUserNear
+    let fromUserFar
+    let distanceNear
+    let distanceFar
+
+    if (userLocation.data) {
+      fromUserNear = userLocation.data.nearestLocation.fromUser[0]
+      fromUserFar = userLocation.data.furthestLocation.fromUser[0]
+
+      distanceNear = userLocation.data.nearestLocation.distance
+      distanceFar = userLocation.data.furthestLocation.distance / 1000
+
+      distanceFar = numeral(distanceFar).format('0,0.0')
+
+      if (distanceNear > 1000) {
+        distanceNear = distanceNear / 1000
+        distanceNear = numeral(distanceNear).format('0,0.0') + ' Km'
+      } else {
+        distanceNear = distanceNear + ' m'
+      }
+    }
+
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
-        <SafeAreaView />
+        <SafeAreaView>
+          {userLocation.data && (
+            <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
+              <Text>
+                {fromUserNear.nickName + ' {' + distanceNear + ' away }'}
+              </Text>
+              <View style={{ margin: 3 }} />
+              <Text>
+                {fromUserFar.nickName + ' {' + distanceFar + ' Km away }'}
+              </Text>
+            </View>
+          )}
+        </SafeAreaView>
         {userLocation.data == null && <LoadingSpinner />}
       </ImageBackground>
     )
