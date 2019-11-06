@@ -90,9 +90,9 @@ export class HomeScreen extends Component {
 
       if (distanceNear > 1000) {
         distanceNear = distanceNear / 1000
-        distanceNear = numeral(distanceNear).format('0,0.0') + ' Km'
+        distanceNear = numeral(distanceNear).format('0,0.0') + ' km'
       } else {
-        distanceNear = distanceNear + ' m'
+        distanceNear = numeral(distanceNear).format('0') + ' m'
       }
     }
 
@@ -102,16 +102,16 @@ export class HomeScreen extends Component {
           {userLocation.data && (
             <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
               <Text>
-                {fromUserNear.nickName + ' {' + distanceNear + ' away }'}
+                {fromUserNear.nickName + ' { ' + distanceNear + ' away }'}
               </Text>
               <View style={{ margin: 3 }} />
               <Text>
-                {fromUserFar.nickName + ' {' + distanceFar + ' Km away }'}
+                {fromUserFar.nickName + ' { ' + distanceFar + ' km away }'}
               </Text>
             </View>
           )}
         </SafeAreaView>
-        {userLocation.data == null && <LoadingSpinner />}
+        {userLocation.fetchingData && <LoadingSpinner />}
       </ImageBackground>
     )
   }

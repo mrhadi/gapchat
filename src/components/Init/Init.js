@@ -150,6 +150,10 @@ class Init extends React.PureComponent {
 
   handleAppStateChange = nextAppState => {
     console.log('AppState:', nextAppState)
+
+    if (nextAppState === 'active') {
+      this.getCurrentLocation('AppState')
+    }
   }
 
   render() {
