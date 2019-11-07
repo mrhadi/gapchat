@@ -21,6 +21,7 @@ import numeral from 'numeral'
 
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import bg from '../../assets/images/profile/bg.png'
+import colors from '../../styles/colors'
 
 export class HomeScreen extends Component {
   static navigationOptions = {
@@ -119,21 +120,36 @@ export class HomeScreen extends Component {
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
-          {userLocation.data && (
-            <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
-              <Text>
-                {userNear === null
-                  ? '?'
-                  : userNear.nickName + ' { ' + distanceNear + ' away }'}
-              </Text>
-              <View style={{ margin: 3 }} />
-              <Text>
-                {userFar === null
-                  ? '?'
-                  : userFar.nickName + ' { ' + distanceFar + ' away }'}
-              </Text>
-            </View>
-          )}
+          <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
+            {userNear && distanceNear && (
+              <View style={{ alignItems: 'center' }}>
+                <Text>{userNear.nickName}</Text>
+                {userNear.cityName && userNear.countryName && (
+                  <Text>
+                    {userNear.cityName + ' / ' + userNear.countryName}
+                  </Text>
+                )}
+                <Text>{' { ' + distanceNear + ' away }'}</Text>
+              </View>
+            )}
+            <View
+              style={{
+                margin: 10,
+                height: 2,
+                width: 100,
+                backgroundColor: colors.textViolet
+              }}
+            />
+            {userFar && distanceFar && (
+              <View style={{ alignItems: 'center' }}>
+                <Text>{userFar.nickName}</Text>
+                {userFar.cityName && userFar.countryName && (
+                  <Text>{userFar.cityName + ' / ' + userFar.countryName}</Text>
+                )}
+                <Text>{' { ' + distanceFar + ' away }'}</Text>
+              </View>
+            )}
+          </View>
         </SafeAreaView>
         {userLocation.fetchingData && <LoadingSpinner />}
       </ImageBackground>

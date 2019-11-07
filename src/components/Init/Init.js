@@ -7,8 +7,6 @@ import BackgroundFetch from 'react-native-background-fetch'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { bugsnagError } from '../../utils/bugsnag'
-
 import { updateUserLocation } from '../../services/userLocation/actions'
 import { getUser } from '../../services/user/actions'
 
@@ -36,7 +34,6 @@ class Init extends React.PureComponent {
         }
       },
       error => {
-        bugsnagError(error)
         console.log('getCurrentLocation:', error)
       }
     )
@@ -61,7 +58,6 @@ class Init extends React.PureComponent {
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
-        bugsnagError(error)
         console.log('BackgroundFetch failed to start:', error)
       }
     )
@@ -118,7 +114,6 @@ class Init extends React.PureComponent {
         }
       },
       error => {
-        bugsnagError(error)
         console.log('watchPosition:', error)
       },
       { distanceFilter: 10 }
