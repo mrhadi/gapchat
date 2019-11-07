@@ -39,8 +39,8 @@ export default class Nickname extends PureComponent {
           placeholder="Enter your nickname"
           returnKeyLabel="Done"
           returnKeyType="go"
+          autoCapitalize="none"
           spellCheck={false}
-          autoCapitalize="words"
           maxLength={20}
           onChangeText={userNickname => this.setState({ userNickname })}
           onBlur={this.handleTextBlur}

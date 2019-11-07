@@ -74,25 +74,45 @@ export class HomeScreen extends Component {
   render() {
     const { userLocation } = this.props
 
-    let fromUserNear
-    let fromUserFar
-    let distanceNear
-    let distanceFar
+    let userNear = null
+    let userFar = null
+    let distanceNear = 0
+    let distanceFar = 0
 
     if (userLocation.data) {
-      fromUserNear = userLocation.data.nearestLocation.fromUser[0]
-      fromUserFar = userLocation.data.furthestLocation.fromUser[0]
+      if (
+        userLocation.data.nearestLocation &&
+        userLocation.data.nearestLocation.fromUser &&
+        userLocation.data.nearestLocation.fromUser.length > 0
+      ) {
+        userNear = userLocation.data.nearestLocation.fromUser[0]
+      }
+      if (
+        userLocation.data.furthestLocation &&
+        userLocation.data.furthestLocation.fromUser &&
+        userLocation.data.furthestLocation.fromUser.length > 0
+      ) {
+        userFar = userLocation.data.furthestLocation.fromUser[0]
+      }
 
-      distanceNear = userLocation.data.nearestLocation.distance
-      distanceFar = userLocation.data.furthestLocation.distance / 1000
-
-      distanceFar = numeral(distanceFar).format('0,0.0')
-
-      if (distanceNear > 1000) {
-        distanceNear = distanceNear / 1000
-        distanceNear = numeral(distanceNear).format('0,0.0') + ' km'
-      } else {
-        distanceNear = numeral(distanceNear).format('0') + ' m'
+      if (
+        userLocation.data.nearestLocation &&
+        userLocation.data.nearestLocation.distance
+      ) {
+        distanceNear = userLocation.data.nearestLocation.distance
+        if (distanceNear > 1000) {
+          distanceNear = distanceNear / 1000
+          distanceNear = numeral(distanceNear).format('0.0') + ' km'
+        } else {
+          distanceNear = numeral(distanceNear).format('0') + ' m'
+        }
+      }
+      if (
+        userLocation.data.furthestLocation &&
+        userLocation.data.furthestLocation.distance
+      ) {
+        distanceFar = userLocation.data.furthestLocation.distance / 1000
+        distanceFar = numeral(distanceFar).format('0,0')
       }
     }
 
@@ -102,11 +122,15 @@ export class HomeScreen extends Component {
           {userLocation.data && (
             <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
               <Text>
-                {fromUserNear.nickName + ' { ' + distanceNear + ' away }'}
+                {userNear === null
+                  ? '?'
+                  : userNear.nickName + ' { ' + distanceNear + ' away }'}
               </Text>
               <View style={{ margin: 3 }} />
               <Text>
-                {fromUserFar.nickName + ' { ' + distanceFar + ' km away }'}
+                {userFar === null
+                  ? '?'
+                  : userFar.nickName + ' { ' + distanceFar + ' away }'}
               </Text>
             </View>
           )}

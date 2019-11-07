@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import { StyleSheet, Switch, Text, View } from 'react-native'
 import PropTypes from 'prop-types'
+import numeral from 'numeral'
+
 import Colors from '../../../styles/colors'
 import Slider from '@react-native-community/slider'
 import { fontScale, scaleHeight, scaleWidth } from '../../../utils/scaleUtils'
@@ -76,7 +78,11 @@ export default class Settings extends PureComponent {
         <View style={{ height: 15 }} />
         <View style={styles.featureRow}>
           <Text style={styles.featureTitle}>Nearest Distance</Text>
-          <Text style={styles.km}>{userNearestDistance} m</Text>
+          <Text style={styles.km}>
+            {userNearestDistance < 1000
+              ? numeral(userNearestDistance).format('0') + ' m'
+              : numeral(userNearestDistance / 1000).format('0.0') + ' km'}
+          </Text>
         </View>
         <Text style={styles.featureDescription}>
           Choose the nearest distance you want us to find your potential
@@ -96,7 +102,9 @@ export default class Settings extends PureComponent {
         <View style={{ height: 15 }} />
         <View style={styles.featureRow}>
           <Text style={styles.featureTitle}>Furthest Distance</Text>
-          <Text style={styles.km}>{userFurthestDistance} km</Text>
+          <Text style={styles.km}>
+            {numeral(userFurthestDistance).format('0,0')} km
+          </Text>
         </View>
         <Text style={styles.featureDescription}>
           Choose the furthest distance you want us to find your potential

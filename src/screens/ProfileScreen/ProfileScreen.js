@@ -53,8 +53,8 @@ class ProfileScreen extends Component {
     userAvatar: '',
     userNickname: '',
     userActive: true,
-    userNearestDistance: 20,
-    userFurthestDistance: 20000
+    userNearestDistance: 5000,
+    userFurthestDistance: 15000
   }
 
   showAvatarBrowser = () => {
