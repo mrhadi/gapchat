@@ -95,6 +95,8 @@ export class HomeScreen extends Component {
     let userFar = null
     let distanceNear = null
     let distanceFar = null
+    let nearestWeather = null
+    let furthestWeather = null
 
     if (userLocation.data) {
       if (
@@ -131,11 +133,28 @@ export class HomeScreen extends Component {
         distanceFar = userLocation.data.furthestLocation.distance / 1000
         distanceFar = numeral(distanceFar).format('0,0')
       }
+
+      if (
+        userLocation.data.nearestLocation &&
+        userLocation.data.nearestLocation.weather
+      ) {
+        nearestWeather = JSON.parse(userLocation.data.nearestLocation.weather)
+        console.log(nearestWeather)
+      }
+      if (
+        userLocation.data.furthestLocation &&
+        userLocation.data.furthestLocation.weather
+      ) {
+        furthestWeather = JSON.parse(userLocation.data.furthestLocation.weather)
+        console.log(furthestWeather)
+      }
     }
 
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
-        <NavigationEvents onDidFocus={payload => this.handleScreenDidFocus(payload)} />
+        <NavigationEvents
+          onDidFocus={payload => this.handleScreenDidFocus(payload)}
+        />
         <SafeAreaView>
           <View style={styles.headerRow}>
             <CircleButton
@@ -156,13 +175,26 @@ export class HomeScreen extends Component {
                   </Text>
                 )}
                 <Text>{' { ' + distanceNear + ' away }'}</Text>
+                {nearestWeather && (
+                  <View style={{ alignItems: 'center' }}>
+                    <Text selectable={true}>{`{ ${
+                      nearestWeather.location.name
+                    }, ${nearestWeather.location.country}, ${
+                      nearestWeather.location.region
+                    } }`}</Text>
+                    <Text>{`${
+                      nearestWeather.current.temperature
+                    } / ${nearestWeather.current.weather_descriptions.toString()}`}</Text>
+                    <Text>{`${nearestWeather.location.localtime}`}</Text>
+                  </View>
+                )}
               </View>
             )}
             <View
               style={{
                 margin: 10,
-                height: 2,
-                width: 100,
+                height: 1,
+                width: 200,
                 backgroundColor: colors.textViolet
               }}
             />
@@ -173,6 +205,19 @@ export class HomeScreen extends Component {
                   <Text>{userFar.cityName + ' / ' + userFar.countryName}</Text>
                 )}
                 <Text>{' { ' + distanceFar + ' km away }'}</Text>
+                {furthestWeather && (
+                  <View style={{ alignItems: 'center' }}>
+                    <Text selectable={true}>{`{ ${
+                      furthestWeather.location.name
+                    }, ${furthestWeather.location.country}, ${
+                      furthestWeather.location.region
+                    } }`}</Text>
+                    <Text>{`${
+                      furthestWeather.current.temperature
+                    } / ${furthestWeather.current.weather_descriptions.toString()}`}</Text>
+                    <Text>{`${furthestWeather.location.localtime}`}</Text>
+                  </View>
+                )}
               </View>
             )}
           </View>
