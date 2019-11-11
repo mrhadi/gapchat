@@ -5,7 +5,7 @@ import { bugsnagError } from '../utils/bugsnag'
 
 const instance = axios.create({
   baseURL: API,
-  timeout: 5000
+  timeout: 10000
 })
 
 instance.defaults.headers.common['device-id'] = deviceUniqueID

@@ -18,7 +18,8 @@ export default class Settings extends PureComponent {
   state = {
     userActive: true,
     userNearestDistance: 20,
-    userFurthestDistance: 20000
+    userFurthestDistance: 20000,
+    showActiveOption: false
   }
 
   componentDidMount() {
@@ -26,7 +27,8 @@ export default class Settings extends PureComponent {
     this.setState({
       userActive: defaultSettings.userActive,
       userNearestDistance: defaultSettings.userNearestDistance,
-      userFurthestDistance: defaultSettings.userFurthestDistance
+      userFurthestDistance: defaultSettings.userFurthestDistance,
+      showActiveOption: defaultSettings.showActiveOption
     })
   }
 
@@ -57,25 +59,34 @@ export default class Settings extends PureComponent {
   }
 
   render() {
-    const { userActive, userFurthestDistance, userNearestDistance } = this.state
+    const {
+      userActive,
+      userFurthestDistance,
+      userNearestDistance,
+      showActiveOption
+    } = this.state
     return (
       <View style={styles.settingsContainer}>
-        <View style={styles.featureRow}>
-          <Text style={styles.featureTitle}>Active</Text>
-          <Switch
-            trackColor={{
-              true: Colors.purple,
-              false: Colors.buttonGrey
-            }}
-            value={userActive}
-            thumbColor={Colors.buttonGrey}
-            onValueChange={this.handleActiveChanged}
-          />
-        </View>
-        <Text style={styles.featureDescription}>
-          Set if you are availabe for chatting or not.
-        </Text>
-        <View style={{ height: 15 }} />
+        {showActiveOption && (
+          <View style={{ width: '100%' }}>
+            <View style={styles.featureRow}>
+              <Text style={styles.featureTitle}>Active</Text>
+              <Switch
+                trackColor={{
+                  true: Colors.purple,
+                  false: Colors.buttonGrey
+                }}
+                value={userActive}
+                thumbColor={Colors.buttonGrey}
+                onValueChange={this.handleActiveChanged}
+              />
+            </View>
+            <Text style={styles.featureDescription}>
+              Set if you are availabe for chatting or not.
+            </Text>
+            <View style={{ height: 15 }} />
+          </View>
+        )}
         <View style={styles.featureRow}>
           <Text style={styles.featureTitle}>Nearest Distance</Text>
           <Text style={styles.km}>

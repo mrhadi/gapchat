@@ -20,7 +20,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { addUser } from '../../services/user/actions'
+import { addUser, updateUser } from '../../services/user/actions'
 
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
@@ -36,25 +36,40 @@ import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 const { height } = Dimensions.get('window')
 
 class ProfileScreen extends Component {
-  static navigationOptions = {
-    headerLeft: null
+  static navigationOptions = ({ navigation }) => {
+    const { state } = navigation
+    if (state.params && state.params === 'edit') {
+      return null
+    } else {
+      return {
+        headerLeft: null
+      }
+    }
   }
 
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     user: PropTypes.object,
-    addUser: PropTypes.func.isRequired
+    addUser: PropTypes.func.isRequired,
+    updateUser: PropTypes.func.isRequired
   }
 
-  state = {
-    modalVisible: false,
-    showLoading: false,
-    errorMessage: '',
-    userAvatar: '',
-    userNickname: '',
-    userActive: true,
-    userNearestDistance: 5000,
-    userFurthestDistance: 15000
+  constructor(props) {
+    super(props)
+
+    const { user, navigation } = this.props
+
+    this.state = {
+      editMode: navigation.state.params && navigation.state.params === 'edit',
+      modalVisible: false,
+      showLoading: false,
+      errorMessage: '',
+      userAvatar: user.data ? user.data.avatar : '',
+      userNickname: user.data ? user.data.nickName : '',
+      userActive: user.data ? user.data.active : true,
+      userNearestDistance: user.data ? user.data.nearest : 5000,
+      userFurthestDistance: user.data ? user.data.furthest : 15000
+    }
   }
 
   showAvatarBrowser = () => {
@@ -77,6 +92,7 @@ class ProfileScreen extends Component {
   handleOnSave = () => {
     const {
       userAvatar,
+      userActive,
       userNickname,
       userNearestDistance,
       userFurthestDistance
@@ -97,12 +113,17 @@ class ProfileScreen extends Component {
     const userData = {
       nickName: userNickname,
       avatar: userAvatar,
+      active: userActive,
       nearest: userNearestDistance,
       furthest: userFurthestDistance
     }
 
-    const { addUser: dispatchAddUser } = this.props
-    dispatchAddUser(userData)
+    const {
+      addUser: dispatchAddUser,
+      updateUser: dispatchUpdateUser,
+      user
+    } = this.props
+    user.data ? dispatchUpdateUser(userData) : dispatchAddUser(userData)
   }
 
   handleSettingsChanged = settings => {
@@ -125,10 +146,11 @@ class ProfileScreen extends Component {
   )
 
   componentDidUpdate() {
-    console.log('componentDidUpdate: Profile')
     const { user, navigation } = this.props
+    const { showLoading } = this.state
 
-    if (user.userVerified) {
+    if (!showLoading || user.fetchingData) return
+    if (user.userVerified || user.userUpdated) {
       navigation.replace('Home')
     }
   }
@@ -139,6 +161,7 @@ class ProfileScreen extends Component {
 
   render() {
     const {
+      editMode,
       modalVisible,
       showLoading,
       errorMessage,
@@ -151,10 +174,10 @@ class ProfileScreen extends Component {
     const defaultSettings = {
       userActive: userActive,
       userNearestDistance: userNearestDistance,
-      userFurthestDistance: userFurthestDistance
+      userFurthestDistance: userFurthestDistance,
+      showActiveOption: editMode
     }
-    const { user } = this.props
-    console.log('User:', user)
+
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <SafeAreaView>
@@ -216,7 +239,7 @@ export const mapStateToProps = ({ user }) => ({
 })
 
 export const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addUser }, dispatch)
+  bindActionCreators({ addUser, updateUser }, dispatch)
 
 export default connect(
   mapStateToProps,

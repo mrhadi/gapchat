@@ -13,15 +13,19 @@ import {
   Text,
   PermissionsAndroid
 } from 'react-native'
-import { SafeAreaView } from 'react-navigation'
+import { SafeAreaView, NavigationEvents } from 'react-navigation'
 import { bindActionCreators } from 'redux'
 
 import { connect } from 'react-redux'
 import numeral from 'numeral'
 
+import { getLocation } from '../../services/userLocation/actions'
+
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
-import bg from '../../assets/images/profile/bg.png'
+import CircleButton from '../../components/CircleButton/CircleButton'
+import bg from '../../assets/images/home/bg.png'
 import colors from '../../styles/colors'
+import { scaleWidth } from '../../utils/scaleUtils'
 
 export class HomeScreen extends Component {
   static navigationOptions = {
@@ -31,7 +35,8 @@ export class HomeScreen extends Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     userLocation: PropTypes.object,
-    user: PropTypes.object
+    user: PropTypes.object,
+    getLocation: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -72,13 +77,24 @@ export class HomeScreen extends Component {
     }
   }
 
+  navigateToProfile = () => {
+    const { navigation } = this.props
+    navigation.navigate('Profile', 'edit')
+  }
+
+  handleScreenDidFocus = payload => {
+    console.log('handleScreenDidFocus:', payload)
+    const { getLocation: dispatchGetLocation } = this.props
+    dispatchGetLocation()
+  }
+
   render() {
     const { userLocation } = this.props
 
     let userNear = null
     let userFar = null
-    let distanceNear = 0
-    let distanceFar = 0
+    let distanceNear = null
+    let distanceFar = null
 
     if (userLocation.data) {
       if (
@@ -119,7 +135,17 @@ export class HomeScreen extends Component {
 
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
+        <NavigationEvents onDidFocus={payload => this.handleScreenDidFocus(payload)} />
         <SafeAreaView>
+          <View style={styles.headerRow}>
+            <CircleButton
+              style={{ alignSelf: 'flex-end', marginRight: 10 }}
+              onClick={this.navigateToProfile}
+              icon="gear"
+              tintColor={colors.textViolet}
+              diameter={scaleWidth(30)}
+            />
+          </View>
           <View style={{ margin: 20, marginTop: 100, alignItems: 'center' }}>
             {userNear && distanceNear && (
               <View style={{ alignItems: 'center' }}>
@@ -146,7 +172,7 @@ export class HomeScreen extends Component {
                 {userFar.cityName && userFar.countryName && (
                   <Text>{userFar.cityName + ' / ' + userFar.countryName}</Text>
                 )}
-                <Text>{' { ' + distanceFar + ' away }'}</Text>
+                <Text>{' { ' + distanceFar + ' km away }'}</Text>
               </View>
             )}
           </View>
@@ -162,7 +188,8 @@ export const mapStateToProps = ({ userLocation, user }) => ({
   user
 })
 
-export const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch)
+export const mapDispatchToProps = dispatch =>
+  bindActionCreators({ getLocation }, dispatch)
 
 export default connect(
   mapStateToProps,
@@ -178,5 +205,8 @@ const styles = StyleSheet.create({
   bgImage: {
     width: '100%',
     height: '100%'
+  },
+  headerRow: {
+    margin: 10
   }
 })

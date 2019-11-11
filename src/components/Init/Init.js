@@ -84,6 +84,10 @@ class Init extends React.PureComponent {
       console.log('handleUpdateLocation: no user')
       return
     }
+    if (!user.data.active) {
+      console.log('handleUpdateLocation: user is not active')
+      return
+    }
     if (userLocation.fetchingData) {
       console.log('handleUpdateLocation: fetching data')
       return
@@ -119,20 +123,28 @@ class Init extends React.PureComponent {
       { distanceFilter: 10 }
     )
 
+    /*
     UPDATE_LOCATION_TIMER = setInterval(
       () => this.getCurrentLocation('Interval'),
-      1000 * 30
+      1000 * 60
     )
+    */
 
     this.setupBackgroundFetch()
   }
 
   componentDidUpdate(prevProps) {
     const { user, userLocation } = this.props
-    console.log('Init:', { user: user.data, userLocation: userLocation.data })
+    console.log('Init:', { user, userLocation })
 
     if (!prevProps.user.userVerified && user.userVerified) {
       console.log('User is ready, get the location now ...')
+      this.getCurrentLocation('Interval')
+      return
+    }
+
+    if (userLocation.getLocation) {
+      console.log('Got getLocation action, get the location now ...')
       this.getCurrentLocation('Interval')
     }
   }
