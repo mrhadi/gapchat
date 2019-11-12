@@ -13,8 +13,6 @@ import { bindActionCreators } from 'redux'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
 export class SplashScreen extends Component {
-  static navigationOptions = {}
-
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     userLocation: PropTypes.object,

@@ -41,7 +41,33 @@ const AppNavigator = createStackNavigator(
       })
     },
     Profile: {
-      screen: ProfileScreen
+      screen: ProfileScreen,
+      navigationOptions: () => ({
+        title: 'Profile Settings',
+        headerTransparent: true,
+        headerBackImage: (
+          <IcoMoon
+            name="back"
+            size={fontScale(12)}
+            color={Colors.textViolet}
+            style={{
+              paddingLeft: Platform.OS === 'ios' ? scaleX(20) : scaleX(10),
+              paddingRight: scaleX(10),
+              paddingVertical: scaleY(10)
+            }}
+          />
+        ),
+        headerTitleStyle: {
+          fontSize: fontScale(14),
+          color: Colors.textViolet
+        },
+        headerBackground: (
+          <LinearGradient
+            colors={['#F4F4F4', 'rgba(244,244,244,0.2)']}
+            style={{ flex: 1 }}
+          />
+        )
+      })
     }
   },
   {

@@ -26,8 +26,6 @@ import colors from '../../styles/colors'
 import { scaleWidth } from '../../utils/scaleUtils'
 
 export class HomeScreen extends Component {
-  static navigationOptions = {}
-
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     userLocation: PropTypes.object,
