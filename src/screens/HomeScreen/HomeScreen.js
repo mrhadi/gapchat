@@ -12,11 +12,10 @@ import {
   Text
 } from 'react-native'
 import { SafeAreaView, NavigationEvents } from 'react-navigation'
-import moment from 'moment'
+import numeral from 'numeral'
 
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import numeral from 'numeral'
 
 import { getLocation } from '../../services/userLocation/actions'
 
@@ -25,6 +24,7 @@ import CircleButton from '../../components/CircleButton/CircleButton'
 import bg from '../../assets/images/home/bg.png'
 import colors from '../../styles/colors'
 import { scaleWidth } from '../../utils/scaleUtils'
+import { timeUTCOffset } from '../../utils/timeUtils'
 
 export class HomeScreen extends Component {
   static propTypes = {
@@ -151,9 +151,9 @@ export class HomeScreen extends Component {
                     <Text>{`${
                       nearestWeather.current.temperature
                     } / ${nearestWeather.current.weather_descriptions.toString()}`}</Text>
-                    <Text>{`${moment()
-                      .utcOffset(parseFloat(nearestWeather.location.utc_offset))
-                      .format('h:mm a')}`}</Text>
+                    <Text>{`${timeUTCOffset(
+                      nearestWeather.location.utc_offset
+                    )}`}</Text>
                   </View>
                 )}
               </View>
@@ -183,9 +183,9 @@ export class HomeScreen extends Component {
                     <Text>{`${
                       furthestWeather.current.temperature
                     } / ${furthestWeather.current.weather_descriptions.toString()}`}</Text>
-                    <Text>{`${moment()
-                      .utcOffset(parseFloat(furthestWeather.location.utc_offset))
-                      .format('h:mm a')}`}</Text>
+                    <Text>{`${timeUTCOffset(
+                      furthestWeather.location.utc_offset
+                    )}`}</Text>
                   </View>
                 )}
               </View>
