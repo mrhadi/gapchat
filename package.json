@@ -19,6 +19,7 @@
     "clean-ios": "watchman watch-del-all && rm -rf node_modules && rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/npm-* && yarn install && rm -rf ios/build && yarn start -- --reset-cache"
   },
   "dependencies": {
+    "@react-native-community/netinfo": "^3.2.1",
     "@react-native-community/slider": "^1.1.4",
     "axios": "^0.19.0",
     "bugsnag-react-native": "^2.23.2",
@@ -30,6 +31,7 @@
     "react-native": "0.59.8",
     "react-native-background-fetch": "^2.7.1",
     "react-native-device-info": "^2.1.3",
+    "react-native-flash-message": "^0.1.15",
     "react-native-geolocation-service": "^3.1.0",
     "react-native-gesture-handler": "^1.3.0",
     "react-native-global-props": "^1.1.5",

@@ -59,7 +59,7 @@ export default class Onboarding extends Component {
 
   navigate = event => {
     const { navigation } = this.props
-    navigation.navigate('Profile', event)
+    navigation.replace('Profile', event)
   }
 
   goNext = () => {

@@ -1,23 +1,33 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { AppState } from 'react-native'
+import { AppState, PermissionsAndroid, Platform } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import BackgroundFetch from 'react-native-background-fetch'
+import { showMessage } from 'react-native-flash-message'
+import NetInfo from '@react-native-community/netinfo'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { updateUserLocation } from '../../services/userLocation/actions'
+import {
+  updateUserLocation,
+  setLocation
+} from '../../services/userLocation/actions'
 import { getUser } from '../../services/user/actions'
 
+import colors from '../../styles/colors'
+import logger from '../../utils/logger'
+
 let watchID = null
-let UPDATE_LOCATION_TIMER = null
+// let UPDATE_LOCATION_TIMER = null
+let netInfoUnsubscribe = null
 
 class Init extends React.PureComponent {
   static propTypes = {
     userLocation: PropTypes.object,
     user: PropTypes.object,
     updateUserLocation: PropTypes.func.isRequired,
+    setLocation: PropTypes.func.isRequired,
     getUser: PropTypes.func.isRequired
   }
 
@@ -26,15 +36,38 @@ class Init extends React.PureComponent {
     user: null
   }
 
+  requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Permission',
+          message: 'I need your location mate!',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK'
+        }
+      )
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the location')
+      } else {
+        console.log('Location permission denied')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   getCurrentLocation = requestedBy => {
     Geolocation.getCurrentPosition(
       position => {
         if (position.coords) {
-          this.handleUpdateLocation(position.coords, requestedBy)
+          const { setLocation: dispatchSetLocation } = this.props
+          dispatchSetLocation({ coords: position.coords, requestedBy })
         }
       },
       error => {
-        console.log('getCurrentLocation:', error)
+        logger.log('getCurrentLocation:', error)
       }
     )
   }
@@ -42,7 +75,7 @@ class Init extends React.PureComponent {
   setupBackgroundFetch = () => {
     BackgroundFetch.configure(
       {
-        minimumFetchInterval: 15,
+        minimumFetchInterval: 30,
         // Android options
         stopOnTerminate: false,
         startOnBoot: true,
@@ -53,59 +86,98 @@ class Init extends React.PureComponent {
         requiresStorageNotLow: false
       },
       () => {
-        console.log('Received background-fetch event')
+        logger.log('Received background-fetch event')
         this.getCurrentLocation('BackgroundFetch')
         BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA)
       },
       error => {
-        console.log('BackgroundFetch failed to start:', error)
+        logger.log('BackgroundFetch failed to start:', error)
       }
     )
 
     BackgroundFetch.status(status => {
       switch (status) {
         case BackgroundFetch.STATUS_RESTRICTED:
-          console.log('BackgroundFetch restricted')
+          logger.log('BackgroundFetch restricted')
           break
         case BackgroundFetch.STATUS_DENIED:
-          console.log('BackgroundFetch denied')
+          logger.log('BackgroundFetch denied')
           break
         case BackgroundFetch.STATUS_AVAILABLE:
-          console.log('BackgroundFetch is enabled')
+          logger.log('BackgroundFetch is enabled')
           break
       }
     })
   }
 
-  handleUpdateLocation = (coords, requestedBy) => {
+  handleUpdateLocation = () => {
     const { userLocation, user } = this.props
 
-    if (user === null || user.data === null) {
-      console.log('handleUpdateLocation: no user')
+    if (user.data === null) {
+      logger.log('handleUpdateLocation: no user')
       return
     }
     if (!user.data.active) {
-      console.log('handleUpdateLocation: user is not active')
+      logger.log('handleUpdateLocation: user is not active')
       return
     }
     if (userLocation.fetchingData) {
-      console.log('handleUpdateLocation: fetching data')
+      logger.log('handleUpdateLocation: fetching data')
+      return
+    }
+    if (!userLocation.currentLocation) {
+      logger.log('handleUpdateLocation: no currentLocation')
       return
     }
 
+    showMessage({
+      message: 'Updating Location ...',
+      type: 'info',
+      backgroundColor: colors.textViolet
+    })
+
     const locationData = {
-      speed: coords.speed,
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-      metaData: { requestedBy }
+      speed: userLocation.currentLocation.coords.speed,
+      latitude: userLocation.currentLocation.coords.latitude,
+      longitude: userLocation.currentLocation.coords.longitude,
+      metaData: { requestedBy: userLocation.currentLocation.requestedBy }
     }
-    console.log('handleUpdateLocation:', requestedBy)
+    logger.log(
+      'handleUpdateLocation:',
+      userLocation.currentLocation.requestedBy
+    )
 
     const { updateUserLocation: dispatchUpdateUserLocation } = this.props
     dispatchUpdateUserLocation(locationData)
   }
 
-  componentDidMount() {
+  showConnectionMessage = message => {
+    showMessage({
+      message,
+      type: 'info',
+      backgroundColor: colors.textViolet
+    })
+  }
+
+  async componentDidMount() {
+    if (Platform.OS !== 'ios') {
+      await this.requestLocationPermission()
+    }
+
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected) {
+        this.showConnectionMessage('No internet connection!')
+      }
+    })
+
+    netInfoUnsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected) {
+        this.showConnectionMessage('Internet back online')
+      } else {
+        this.showConnectionMessage('No internet connection!')
+      }
+    })
+
     AppState.addEventListener('change', this.handleAppStateChange)
 
     const { getUser: dispatchGetUser } = this.props
@@ -114,13 +186,18 @@ class Init extends React.PureComponent {
     watchID = Geolocation.watchPosition(
       position => {
         if (position.coords) {
-          this.handleUpdateLocation(position.coords, 'WatchPosition')
+          console.log('WatchPosition')
+          const { setLocation: dispatchSetLocation } = this.props
+          dispatchSetLocation({
+            coords: position.coords,
+            requestedBy: 'WatchPosition'
+          })
         }
       },
       error => {
-        console.log('watchPosition:', error)
+        logger.log('watchPosition:', error)
       },
-      { distanceFilter: 10 }
+      { distanceFilter: 20 }
     )
 
     /*
@@ -135,31 +212,53 @@ class Init extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     const { user, userLocation } = this.props
-    console.log('Init:', { user, userLocation })
+    logger.log('Init:', { user, userLocation })
 
-    if (!prevProps.user.userVerified && user.userVerified) {
-      console.log('User is ready, get the location now ...')
-      this.getCurrentLocation('Interval')
+    if (!user.data) return
+
+    if (!prevProps.user.data && user.data) {
+      logger.log('User is ready, update location ...')
+      this.handleUpdateLocation()
       return
     }
 
-    if (userLocation.getLocation) {
-      console.log('Got getLocation action, get the location now ...')
-      this.getCurrentLocation('Interval')
+    if (userLocation.getLocation && !prevProps.userLocation.getLocation) {
+      logger.log('getLocation action, get the location now ...')
+      this.handleUpdateLocation()
+      this.getCurrentLocation('GetLocationAction')
+      return
+    }
+
+    const currentLocation = userLocation.currentLocation
+    const prevLocation = prevProps.userLocation.currentLocation
+
+    if (currentLocation && !prevLocation) {
+      this.handleUpdateLocation()
+      return
+    }
+
+    if (
+      currentLocation.coords.latitude !== prevLocation.coords.latitude ||
+      currentLocation.coords.longitude !== prevLocation.coords.longitude
+    ) {
+      logger.log('currentLocation has changed, update location')
+      this.handleUpdateLocation()
     }
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this.handleAppStateChange)
     watchID != null && Geolocation.clearWatch(watchID)
-    clearTimeout(UPDATE_LOCATION_TIMER)
+    // clearTimeout(UPDATE_LOCATION_TIMER)
+    if (netInfoUnsubscribe) netInfoUnsubscribe()
   }
 
   handleAppStateChange = nextAppState => {
-    console.log('AppState:', nextAppState)
+    logger.log('AppState:', nextAppState)
 
     if (nextAppState === 'active') {
       this.getCurrentLocation('AppState')
+      this.handleUpdateLocation()
     }
   }
 
@@ -174,7 +273,7 @@ export const mapStateToProps = ({ userLocation, user }) => ({
 })
 
 export const mapDispatchToProps = dispatch =>
-  bindActionCreators({ updateUserLocation, getUser }, dispatch)
+  bindActionCreators({ updateUserLocation, getUser, setLocation }, dispatch)
 
 export default connect(
   mapStateToProps,

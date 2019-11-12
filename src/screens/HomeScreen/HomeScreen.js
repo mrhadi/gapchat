@@ -9,9 +9,7 @@ import {
   ImageBackground,
   StyleSheet,
   View,
-  Platform,
-  Text,
-  PermissionsAndroid
+  Text
 } from 'react-native'
 import { SafeAreaView, NavigationEvents } from 'react-navigation'
 import { bindActionCreators } from 'redux'
@@ -28,9 +26,7 @@ import colors from '../../styles/colors'
 import { scaleWidth } from '../../utils/scaleUtils'
 
 export class HomeScreen extends Component {
-  static navigationOptions = {
-    title: 'Home'
-  }
+  static navigationOptions = {}
 
   static propTypes = {
     navigation: PropTypes.object.isRequired,
@@ -48,42 +44,13 @@ export class HomeScreen extends Component {
     user: null
   }
 
-  requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location Permission',
-          message: 'I need your location mate!',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK'
-        }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the location')
-      } else {
-        console.log('Location permission denied')
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  async componentDidMount() {
-    this.props.navigation.setParams({ screen: 'Home' })
-    if (Platform.OS !== 'ios') {
-      await this.requestLocationPermission()
-    }
-  }
-
   navigateToProfile = () => {
     const { navigation } = this.props
     navigation.navigate('Profile', 'edit')
   }
 
-  handleScreenDidFocus = payload => {
-    console.log('handleScreenDidFocus:', payload)
+  handleScreenWillFocus = payload => {
+    console.log('handleScreenWillFocus')
     const { getLocation: dispatchGetLocation } = this.props
     dispatchGetLocation()
   }
@@ -139,21 +106,19 @@ export class HomeScreen extends Component {
         userLocation.data.nearestLocation.weather
       ) {
         nearestWeather = JSON.parse(userLocation.data.nearestLocation.weather)
-        console.log(nearestWeather)
       }
       if (
         userLocation.data.furthestLocation &&
         userLocation.data.furthestLocation.weather
       ) {
         furthestWeather = JSON.parse(userLocation.data.furthestLocation.weather)
-        console.log(furthestWeather)
       }
     }
 
     return (
       <ImageBackground style={styles.bgImage} source={bg}>
         <NavigationEvents
-          onDidFocus={payload => this.handleScreenDidFocus(payload)}
+          onWillFocus={payload => this.handleScreenWillFocus(payload)}
         />
         <SafeAreaView>
           <View style={styles.headerRow}>

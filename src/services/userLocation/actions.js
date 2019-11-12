@@ -3,6 +3,7 @@ export const UPDATE_USER_LOCATION_SUCCESS = 'UPDATE_USER_LOCATION_SUCCESS'
 export const UPDATE_USER_LOCATION_FAIL = 'UPDATE_USER_LOCATION_FAIL'
 
 export const GET_LOCATION = 'GET_LOCATION'
+export const SET_LOCATION = 'SET_LOCATION'
 
 export const updateUserLocation = payload => ({
   type: UPDATE_USER_LOCATION,
@@ -18,4 +19,8 @@ export const updateUserLocationFail = () => ({
 
 export const getLocation = () => ({
   type: GET_LOCATION
+})
+export const setLocation = payload => ({
+  type: SET_LOCATION,
+  payload: payload
 })

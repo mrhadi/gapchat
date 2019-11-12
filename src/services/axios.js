@@ -17,9 +17,9 @@ instance.interceptors.response.use(
   error => {
     bugsnagError(error)
     if (error.response && error.response.data) {
-      console.log('Error:', error.response.data)
+      console.log('axios:', error.response.data)
     } else {
-      console.log('Error:', error)
+      console.log('axios:', error)
     }
 
     return error

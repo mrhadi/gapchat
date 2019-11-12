@@ -13,7 +13,7 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions
+  Dimensions, Platform
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -25,25 +25,50 @@ import { addUser, updateUser } from '../../services/user/actions'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import iPhoneX from '../../utils/iPhoneX'
-import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
+import {
+  fontScale,
+  scaleHeight,
+  scaleWidth,
+  scaleX,
+  scaleY
+} from '../../utils/scaleUtils'
 
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
 import Settings from './Settings/Settings'
 import Nickname from './Nickname/Nickname'
 import ProfilePhoto from './ProfilePhoto/ProfilePhoto'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import IcoMoon from '../../../icomoon/IcoMoon'
 
 const { height } = Dimensions.get('window')
 
 class ProfileScreen extends Component {
   static navigationOptions = ({ navigation }) => {
-    const { state } = navigation
-    if (state.params && state.params === 'edit') {
-      return null
-    } else {
-      return {
-        headerLeft: null
-      }
+    return {
+      title: 'Profile Settings',
+      headerTransparent: true,
+      headerBackImage: (
+        <IcoMoon
+          name="back"
+          size={fontScale(12)}
+          color={Colors.textViolet}
+          style={{
+            paddingLeft: Platform.OS === 'ios' ? scaleX(20) : scaleX(10),
+            paddingRight: scaleX(10),
+            paddingVertical: scaleY(10)
+          }}
+        />
+      ),
+      headerTitleStyle: {
+        fontSize: fontScale(14),
+        color: Colors.textViolet
+      },
+      headerBackground: (
+        <LinearGradient
+          colors={['#F4F4F4', 'rgba(244,244,244,0.2)']}
+          style={{ flex: 1 }}
+        />
+      )
     }
   }
 
@@ -153,10 +178,6 @@ class ProfileScreen extends Component {
     if (user.userVerified || user.userUpdated) {
       navigation.replace('Home')
     }
-  }
-
-  componentWillUnmount() {
-    console.log('componentWillUnmount: Profile')
   }
 
   render() {

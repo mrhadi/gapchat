@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View, Platform, PermissionsAndroid } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -13,9 +13,7 @@ import { bindActionCreators } from 'redux'
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 
 export class SplashScreen extends Component {
-  static navigationOptions = {
-    title: 'Splash'
-  }
+  static navigationOptions = {}
 
   static propTypes = {
     navigation: PropTypes.object.isRequired,
@@ -32,41 +30,7 @@ export class SplashScreen extends Component {
     user: null
   }
 
-  requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Location Permission',
-          message: 'I need your location mate!',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK'
-        }
-      )
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the location')
-      } else {
-        console.log('Location permission denied')
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  async componentDidMount() {
-    this.props.navigation.setParams({ screen: 'Splash' })
-    if (Platform.OS !== 'ios') {
-      await this.requestLocationPermission()
-    }
-  }
-
-  componentWillUnmount() {
-    console.log('componentWillUnmount: Splash')
-  }
-
   componentDidUpdate() {
-    console.log('componentDidUpdate: Splash')
     const { user, navigation } = this.props
 
     if (user.userVerified) {

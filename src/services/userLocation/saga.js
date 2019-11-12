@@ -15,6 +15,12 @@ export default api => {
           yield put(actions.updateUserLocationFail())
         }
         break
+      case actions.SET_LOCATION:
+        console.log('SET_LOCATION:', action.payload)
+        break
+      case actions.GET_LOCATION:
+        console.log('GET_LOCATION')
+        break
       default:
         break
     }
@@ -22,6 +28,8 @@ export default api => {
 
   function* watcher() {
     yield takeEvery([actions.UPDATE_USER_LOCATION], worker)
+    yield takeEvery([actions.SET_LOCATION], worker)
+    yield takeEvery([actions.GET_LOCATION], worker)
   }
 
   return { worker, watcher }
