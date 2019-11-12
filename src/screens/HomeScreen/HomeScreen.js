@@ -5,12 +5,7 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  ImageBackground,
-  StyleSheet,
-  View,
-  Text
-} from 'react-native'
+import { ImageBackground, StyleSheet, View, Text } from 'react-native'
 import { SafeAreaView, NavigationEvents } from 'react-navigation'
 import numeral from 'numeral'
 
@@ -105,14 +100,12 @@ export class HomeScreen extends Component {
         userLocation.data.nearestLocation.weather
       ) {
         nearestWeather = JSON.parse(userLocation.data.nearestLocation.weather)
-        console.log('nearestWeather:', nearestWeather.location.utc_offset)
       }
       if (
         userLocation.data.furthestLocation &&
         userLocation.data.furthestLocation.weather
       ) {
         furthestWeather = JSON.parse(userLocation.data.furthestLocation.weather)
-        console.log('furthestWeather:', furthestWeather.location.utc_offset)
       }
     }
 
