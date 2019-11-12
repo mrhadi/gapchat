@@ -1,0 +1,8 @@
+app_identifier("com.nilooapps.gapchat") # The bundle identifier of your app
+apple_id("mrsir@outlook.com") # Your Apple email address
+
+itc_team_id("117906380") # App Store Connect Team ID
+team_id("DK66BQ6Z82") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
