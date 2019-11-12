@@ -12,8 +12,9 @@ import {
   Text
 } from 'react-native'
 import { SafeAreaView, NavigationEvents } from 'react-navigation'
-import { bindActionCreators } from 'redux'
+import moment from 'moment'
 
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import numeral from 'numeral'
 
@@ -104,12 +105,14 @@ export class HomeScreen extends Component {
         userLocation.data.nearestLocation.weather
       ) {
         nearestWeather = JSON.parse(userLocation.data.nearestLocation.weather)
+        console.log('nearestWeather:', nearestWeather.location.utc_offset)
       }
       if (
         userLocation.data.furthestLocation &&
         userLocation.data.furthestLocation.weather
       ) {
         furthestWeather = JSON.parse(userLocation.data.furthestLocation.weather)
+        console.log('furthestWeather:', furthestWeather.location.utc_offset)
       }
     }
 
@@ -148,7 +151,9 @@ export class HomeScreen extends Component {
                     <Text>{`${
                       nearestWeather.current.temperature
                     } / ${nearestWeather.current.weather_descriptions.toString()}`}</Text>
-                    <Text>{`${nearestWeather.location.localtime}`}</Text>
+                    <Text>{`${moment()
+                      .utcOffset(parseFloat(nearestWeather.location.utc_offset))
+                      .format('h:mm a')}`}</Text>
                   </View>
                 )}
               </View>
@@ -178,7 +183,9 @@ export class HomeScreen extends Component {
                     <Text>{`${
                       furthestWeather.current.temperature
                     } / ${furthestWeather.current.weather_descriptions.toString()}`}</Text>
-                    <Text>{`${furthestWeather.location.localtime}`}</Text>
+                    <Text>{`${moment()
+                      .utcOffset(parseFloat(furthestWeather.location.utc_offset))
+                      .format('h:mm a')}`}</Text>
                   </View>
                 )}
               </View>

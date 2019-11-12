@@ -139,7 +139,6 @@ android {
 
 dependencies {
     implementation project(':@react-native-community_netinfo')
-    implementation project(':bugsnag-react-native')
     implementation project(':react-native-background-fetch')
     implementation project(':react-native-device-info')
     implementation project(':@react-native-community_slider')
