@@ -13,7 +13,7 @@ import {
   View,
   Text,
   ScrollView,
-  Dimensions, Platform
+  Dimensions
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -25,13 +25,7 @@ import { addUser, updateUser } from '../../services/user/actions'
 import bg from '../../assets/images/profile/bg.png'
 import Colors from '../../styles/colors'
 import iPhoneX from '../../utils/iPhoneX'
-import {
-  fontScale,
-  scaleHeight,
-  scaleWidth,
-  scaleX,
-  scaleY
-} from '../../utils/scaleUtils'
+import { fontScale, scaleHeight, scaleWidth } from '../../utils/scaleUtils'
 
 import AvatarBrowserModal from './AvatarBrowserModal/AvatarBrowserModal'
 import Settings from './Settings/Settings'
