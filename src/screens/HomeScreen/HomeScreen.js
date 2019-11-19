@@ -118,7 +118,7 @@ export class HomeScreen extends Component {
           onWillFocus={payload => this.handleScreenWillFocus(payload)}
         />
         <SafeAreaView>
-          <Scanner />
+          {userLocation.fetchingData && <Scanner />}
           <View style={styles.headerRow}>
             <CircleButton
               style={{ alignSelf: 'flex-end', marginRight: 10 }}

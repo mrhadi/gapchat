@@ -26,6 +26,7 @@ export default class Scanner extends PureComponent {
 
   doSpin = () => {
     const { spinValue } = this.state
+
     Animated.timing(spinValue, {
       toValue: 1,
       duration: 1500,
@@ -44,6 +45,7 @@ export default class Scanner extends PureComponent {
       outputRange: ['0deg', '360deg']
     })
     const animatedStyle = { transform: [{ rotate: spin }] }
+
     return (
       <Animated.View style={[styles.container, animatedStyle]}>
         <View style={styles.location}>
