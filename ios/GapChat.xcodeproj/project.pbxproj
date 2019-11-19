@@ -1567,7 +1567,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 102;
+				CURRENT_PROJECT_VERSION = 104;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = DK66BQ6Z82;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1602,7 +1602,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 102;
+				CURRENT_PROJECT_VERSION = 104;
 				DEVELOPMENT_TEAM = DK66BQ6Z82;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../node_modules/react-native-background-fetch/ios/**",
