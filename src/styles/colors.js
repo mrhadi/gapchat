@@ -10,5 +10,6 @@ export default {
   checkGreen: '#228B22',
   errorRed: '#FE2B67',
   sliderGrey: 'rgba(0,0,0,0.2)',
-  sliderViolet: '#dbdbdb'
+  sliderViolet: '#dbdbdb',
+  splashBG: '#7223ff'
 }

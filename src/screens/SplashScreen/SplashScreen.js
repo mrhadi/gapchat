@@ -5,12 +5,14 @@
 
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, View, StatusBar } from 'react-native'
 
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
+import appIcon from '../../assets/images/splash/icon.png'
+import colors from '../../styles/colors'
+import { scaleWidth, scaleHeight } from '../../utils/scaleUtils'
 
 export class SplashScreen extends Component {
   static propTypes = {
@@ -39,11 +41,11 @@ export class SplashScreen extends Component {
   }
 
   render() {
-    const { user } = this.props
-    const userData = user && user.data ? user.data : null
-
     return (
-      <View style={styles.container}>{!userData && <LoadingSpinner />}</View>
+      <View style={styles.container}>
+        <StatusBar hidden={true} />
+        <Image style={styles.appIcon} source={appIcon} />
+      </View>
     )
   }
 }
@@ -62,6 +64,14 @@ export default connect(
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: colors.splashBG,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  appIcon: {
+    width: scaleWidth(200),
+    height: scaleWidth(200),
+    marginBottom: scaleHeight(40)
   }
 })

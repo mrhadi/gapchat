@@ -1,11 +1,11 @@
 import React from 'react'
 import { StyleSheet, View, ActivityIndicator } from 'react-native'
-import Colors from '../../styles/colors'
+import colors from '../../styles/colors'
 
 const LoadingSpinner = () => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color={Colors.bgWhite} />
+      <ActivityIndicator size="large" color={colors.bgWhite} />
     </View>
   )
 }
