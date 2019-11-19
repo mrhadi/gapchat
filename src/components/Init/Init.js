@@ -130,11 +130,13 @@ class Init extends React.PureComponent {
       return
     }
 
+    /*
     showMessage({
       message: 'Updating Location ...',
       type: 'info',
       backgroundColor: colors.textViolet
     })
+    */
 
     const locationData = {
       speed: userLocation.currentLocation.coords.speed,
@@ -172,7 +174,7 @@ class Init extends React.PureComponent {
 
     netInfoUnsubscribe = NetInfo.addEventListener(state => {
       if (state.isConnected) {
-        this.showConnectionMessage('Internet back online')
+        // this.showConnectionMessage('Internet back online')
       } else {
         this.showConnectionMessage('No internet connection!')
       }
