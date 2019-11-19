@@ -16,7 +16,10 @@ import { getLocation } from '../../services/userLocation/actions'
 
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner'
 import CircleButton from '../../components/CircleButton/CircleButton'
+import Scanner from '../../components/Scanner/Scanner'
+
 import bg from '../../assets/images/home/bg.png'
+
 import colors from '../../styles/colors'
 import { scaleWidth } from '../../utils/scaleUtils'
 import { timeUTCOffset } from '../../utils/timeUtils'
@@ -115,6 +118,7 @@ export class HomeScreen extends Component {
           onWillFocus={payload => this.handleScreenWillFocus(payload)}
         />
         <SafeAreaView>
+          <Scanner />
           <View style={styles.headerRow}>
             <CircleButton
               style={{ alignSelf: 'flex-end', marginRight: 10 }}
@@ -160,7 +164,7 @@ export class HomeScreen extends Component {
               }}
             />
             {userFar && distanceFar && (
-              <View style={{ alignItems: 'center' }}>
+              <View style={{ alignItems: 'center', marginTop: 200 }}>
                 <Text>{userFar.nickName}</Text>
                 {userFar.cityName && userFar.countryName && (
                   <Text>{userFar.cityName + ' / ' + userFar.countryName}</Text>
@@ -185,7 +189,7 @@ export class HomeScreen extends Component {
             )}
           </View>
         </SafeAreaView>
-        {userLocation.fetchingData && <LoadingSpinner />}
+        {userLocation.fetchingData && false && <LoadingSpinner />}
       </ImageBackground>
     )
   }
