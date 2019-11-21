@@ -20,10 +20,9 @@
                                                    moduleName:@"GapChat"
                                             initialProperties:nil];
 
-  // rootView.backgroundColor = [[UIColor alloc] initWithRed:114.0f green:35.0f blue:255.0f alpha:1];
+  rootView.backgroundColor = [[UIColor alloc] initWithRed:114.0f green:35.0f blue:255.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  // self.window.backgroundColor = [[UIColor alloc] initWithRed:114.0f green:9.0f blue:13.0f alpha:1];
   
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
