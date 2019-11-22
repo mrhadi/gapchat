@@ -3,6 +3,7 @@ package com.gapchat;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.transistorsoft.rnbackgroundfetch.RNBackgroundFetchPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -32,8 +33,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new NetInfoPackage(),
-            new RNBackgroundFetchPackage(),
+          new SplashScreenReactPackage(),
+          new NetInfoPackage(),
+          new RNBackgroundFetchPackage(),
           new RNDeviceInfo(),
           new ReactSliderPackage(),
           new ImagePickerPackage(),
